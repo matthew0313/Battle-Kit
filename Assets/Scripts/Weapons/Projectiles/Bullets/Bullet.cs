@@ -5,7 +5,9 @@ using Photon.Pun;
 
 public class Bullet : MonoBehaviourPunCallbacks
 {
-    Photon.Realtime.Player owner;
+    [SerializeField] bool reflectable = true;
+    [SerializeField] bool pierce = false;
+    public Photon.Realtime.Player owner { get; private set; }
     protected float damage, speed, range;
     public void Set(float damage, float speed, float range)
     {
@@ -38,7 +40,7 @@ public class Bullet : MonoBehaviourPunCallbacks
             if (tmp.photonView.Owner != owner) Hit(tmp);
             else return;
         }
-        Despawn();
+        if(!pierce) Despawn();
     }
     protected virtual void Hit(Player target)
     {
@@ -57,6 +59,7 @@ public class Bullet : MonoBehaviourPunCallbacks
     }
     public void Reflect(Quaternion reflectDir, Photon.Realtime.Player newOwner)
     {
+        if (!reflectable) return;
         photonView.RPC("Redirect", RpcTarget.All, reflectDir, newOwner);
     }
 }

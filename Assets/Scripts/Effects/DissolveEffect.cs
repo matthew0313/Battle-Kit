@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
+[RequireComponent(typeof(PhotonView))]
 public class DissolveEffect : MonoBehaviourPun
 {
     [SerializeField] SpriteRenderer rend;

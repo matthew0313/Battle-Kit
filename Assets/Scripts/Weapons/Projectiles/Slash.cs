@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class Slash : MonoBehaviourPunCallbacks
+[RequireComponent(typeof(PhotonView), typeof(Reflector))]
+public class Slash : MonoBehaviourPun
 {
     [SerializeField] SpriteRenderer rend;
     Photon.Realtime.Player owner;
@@ -43,14 +44,6 @@ public class Slash : MonoBehaviourPunCallbacks
         {
             Player tmp = collision.GetComponent<Player>();
             if (tmp.photonView.Owner != owner) tmp.photonView.RPC("GetDamage", RpcTarget.All, damage);
-        }
-        else if (collision.CompareTag("Bullet"))
-        {
-            Bullet tmp = collision.GetComponent<Bullet>();
-            if (tmp.photonView.IsMine == false)
-            {
-                collision.GetComponent<Bullet>().Reflect(transform.rotation, photonView.Owner);
-            }
         }
     }
 }

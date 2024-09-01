@@ -14,7 +14,7 @@ public class Explosion : MonoBehaviourPun
         this.damage = damage;
         this.lifeTime = lifeTime;
         this.knockback = knockback;
-        transform.localScale = new Vector2(size * 2, size * 2);
+        photonView.RPC("SetDefaults", RpcTarget.All, size);
         color = rend.color;
     }
     private void Update()
@@ -48,5 +48,11 @@ public class Explosion : MonoBehaviourPun
     {
         color.a = newAlpha;
         rend.color = color;
+    }
+    [PunRPC]
+    public void SetDefaults(float scale)
+    {
+        transform.localScale = new Vector2(scale * 2, scale * 2);
+        color = rend.color;
     }
 }

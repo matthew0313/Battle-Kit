@@ -7,21 +7,33 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(PhotonView))]
-public class Drone : MonoBehaviourPun
+public abstract class Drone : MonoBehaviourPun
 {
-    [SerializeField] float minOwnerDist, moveSpeed;
     protected Player owner;
     public virtual void Set(Player owner)
     {
         Debug.Log(owner);
         this.owner = owner;
     }
-    protected virtual void Update()
+    [PunRPC]
+    public void SetDroneActive(bool active)
     {
-        if (!photonView.IsMine) return;
-        if (Vector2.Distance(owner.transform.position, transform.position) > minOwnerDist)
-        {
-            transform.Translate((owner.transform.position - transform.position).normalized * moveSpeed * Time.deltaTime, Space.World);
-        }
+        gameObject.SetActive(active);
+    }
+    public virtual void OnDroneDeploy()
+    {
+
+    }
+    public virtual void OnDroneUpdate()
+    {
+
+    }
+    public virtual void OnDroneRetract()
+    {
+
+    }
+    public virtual string AmmoDesc()
+    {
+        return "--/--";
     }
 }

@@ -8,7 +8,8 @@ using UnityEngine;
 public class Melee : Weapon
 {
     [Header("Melee")]
-    [SerializeField] float damage, slashRate, slashLifetime;
+    [SerializeField] float damage;
+    [SerializeField] float slashRate, slashLifetime;
     [SerializeField] Slash slash;
     [SerializeField] Transform slashPoint;
     float counter = 0.0f;

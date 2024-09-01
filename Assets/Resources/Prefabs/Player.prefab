@@ -557,7 +557,6 @@ MonoBehaviour:
   model: {fileID: 8505150814198204221}
   hitbox: {fileID: 4526866689979958095}
   maxHp: 100
-  invincibility: 0
   rb: {fileID: 2692790964613209505}
   rotator: {fileID: 8752002043266481501}
   moveSpeed: 5
@@ -571,9 +570,11 @@ MonoBehaviour:
   - {fileID: 5586670117533386497, guid: 91290e6c84502c9458ab74b4f4bfd5e7, type: 3}
   - {fileID: 8427032264552822509, guid: 7293ee37dca74b742aa8b5683bdad5e6, type: 3}
   secondaries:
+  - {fileID: 5933091864567038558, guid: e61dd20659ffbae439da02b26f7616c5, type: 3}
+  - {fileID: 5933091864567038558, guid: 683fa0266703a174a9146cc13b68a3b7, type: 3}
   - {fileID: 5404887986490826710, guid: e3cf63dc912c84a428f77ccc78f0fe5a, type: 3}
   melees:
-  - {fileID: 1354124183883160663, guid: 533f52f495f704f45ace9deb02822ed7, type: 3}
+  - {fileID: 8238596146660582401, guid: 533f52f495f704f45ace9deb02822ed7, type: 3}
   weapons: []
   hpScaler: {fileID: 5326620667084677965}
   dashCooldownScaler: {fileID: 7313679278998830418}

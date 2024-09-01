@@ -14,18 +14,23 @@ public class Player : MonoBehaviourPunCallbacks
     [Header("Statistics")]
     [SerializeField] float maxHp;
     float hp;
-    [SerializeField] bool invincibility = false;
+    int m_invincibility = 0;
+    public bool invincibility { get { return m_invincibility > 0; } set { if (value == false) m_invincibility--; else m_invincibility++; } }
 
     [Header("Movement")]
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Transform rotator;
     [SerializeField] float moveSpeed = 1.0f;
+    int cantMove = 0;
+    public bool canMove { get { return cantMove <= 0; } set { if (value == false) cantMove++; else cantMove--; } }
 
     [Header("Dashing")]
     [SerializeField] float dashSpeed = 20.0f;
     [SerializeField] float dashDist = 3.0f;
     [SerializeField] float dashEffectRate = 0.05f;
     [SerializeField] float dashCooldown = 1.0f;
+    int cantDash = 0;
+    public bool canDash { get { return cantDash <= 0; } set { if (value == false) cantDash++; else cantDash--; } }
 
     [Header("Weapons")]
     [SerializeField] Transform weaponAnchor;
@@ -39,10 +44,13 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] Transform hpScaler;
     [SerializeField] Transform dashCooldownScaler;
 
-    public Func<string> ammoDesc;
+    public List<SkillEventPair> skillList { get; } = new();
+    public Func<string> ammoDesc, extraDesc;
     public Func<float> barFill;
-    public Action ammoDescChange;
+    public Action ammoDescChange, skillDescChange;
     public Action weaponChange;
+
+    public Action<float> onDamageDeal;
     private void Awake()
     {
         hp = maxHp;
@@ -93,7 +101,7 @@ public class Player : MonoBehaviourPunCallbacks
     IEnumerator dashEffect = null;
     void Move()
     {
-        if (rb.velocity.magnitude > 2.0f)
+        if (rb.velocity.magnitude > 2.0f || canMove == false)
         {
             return;
         }
@@ -108,7 +116,7 @@ public class Player : MonoBehaviourPunCallbacks
             }
             else
             {
-                if (Input.GetKeyDown(KeyCode.LeftShift))
+                if (canDash && Input.GetKeyDown(KeyCode.LeftShift))
                 {
                     photonView.RPC("SetDashCooldown", RpcTarget.All, 0.0f);
                     dashDir = move.normalized;
@@ -168,6 +176,10 @@ public class Player : MonoBehaviourPunCallbacks
         }
         heldWeapon.OnWeaponUpdate();
     }
+    void StatusEffectUpdate()
+    {
+
+    }
     [PunRPC]
     public void SetDashCooldown(float dashCooldownCounter)
     {
@@ -184,6 +196,10 @@ public class Player : MonoBehaviourPunCallbacks
     public void GetDamage(float damage)
     {
         if (invincibility || hp == 0) return;
+        if (photonView.IsMine)
+        {
+            GameManager.Instance.UIs.DamageText(damage, transform.position);
+        }
         hp = Mathf.Max(0, hp - damage);
         hpScaler.localScale = new Vector2(hp / maxHp, 1.0f);
         if (hp <= 0 && photonView.IsMine) Death();
@@ -233,4 +249,14 @@ public class Player : MonoBehaviourPunCallbacks
             if (dead) photonView.RPC("SetPlayerActive", newPlayer, false);
         }
     }
+}
+public class SkillEventPair
+{
+    public SkillEventPair(Func<float> skillBarFill, Func<string> skillDesc)
+    {
+        this.skillBarFill = skillBarFill;
+        this.skillDesc = skillDesc;
+    }
+    public readonly Func<float> skillBarFill;
+    public readonly Func<string> skillDesc;
 }

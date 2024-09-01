@@ -10,42 +10,42 @@ public class Drone_Deployer : Weapon
 {
     [SerializeField] Drone drone;
     [SerializeField] Transform spawnPoint;
-    [SerializeField] float spawnCooldown;
     Drone deployed = null;
-    float counter = 0.0f;
+    public override void OnWeaponEquip()
+    {
+        base.OnWeaponEquip();
+        if(deployed == null)
+        {
+            deployed = PhotonNetwork.Instantiate(Path.Combine("Prefabs", drone.gameObject.name), spawnPoint.position, spawnPoint.rotation).GetComponent<Drone>();
+            deployed.Set(owner);
+        }
+        else
+        {
+            deployed.transform.position = spawnPoint.position;
+            deployed.transform.rotation = spawnPoint.rotation;
+            deployed.photonView.RPC("SetDroneActive", RpcTarget.All, true);
+        }
+        deployed.OnDroneDeploy();
+        owner.extraDesc += ExtraDesc;
+    }
     public override void OnWeaponUpdate()
     {
-        base.OnWeaponUpdate();
-        if (counter < spawnCooldown) counter += Time.deltaTime;
-        else if (Input.GetMouseButtonDown(0))
-        {
-            if (deployed == null)
-            {
-                deployed = PhotonNetwork.Instantiate(Path.Combine("Prefabs", drone.gameObject.name), spawnPoint.position, spawnPoint.rotation).GetComponent<Drone>();
-                deployed.Set(owner);
-            }
-            else
-            {
-                PhotonNetwork.Destroy(deployed.gameObject);
-                deployed = null;
-            }
-            owner.ammoDescChange?.Invoke();
-            counter = 0.0f;
-        }
+        deployed.OnDroneUpdate();
+    }
+    public override void OnWeaponUnequip()
+    {
+        base.OnWeaponUnequip();
+        deployed.OnDroneRetract();
+        deployed.photonView.RPC("SetDroneActive", RpcTarget.All, false);
+        owner.extraDesc -= ExtraDesc;
     }
     public override string AmmoDesc()
     {
-        return (deployed == null) ? "Not Deployed" : "Deployed";
-    }
-    public override float BarFill()
-    {
-        return 1.0f - counter / spawnCooldown;
+        return deployed.AmmoDesc();
     }
     private void OnDestroy()
     {
-        if (deployed != null)
-        {
-            PhotonNetwork.Destroy(deployed.gameObject);
-        }
+        if (deployed != null) PhotonNetwork.Destroy(deployed.gameObject);
     }
+    protected virtual string ExtraDesc() => "Press E to switch between move and attack.";
 }

@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(PhotonView))]
-public class Weapon : MonoBehaviourPunCallbacks
+public abstract class Weapon : MonoBehaviourPunCallbacks
 {
     protected Player owner;
 
@@ -67,5 +67,9 @@ public class Weapon : MonoBehaviourPunCallbacks
     public virtual string AmmoDesc()
     {
         return "--/--";
+    }
+    private void OnDestroy()
+    {
+        if (photonView.IsMine && equipped) OnWeaponUnequip();
     }
 }
