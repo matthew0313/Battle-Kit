@@ -362,6 +362,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9eccfea6505c4c4468234cfd55c2c17d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  reflectable: 1
+  pierce: 0
   explosion: {fileID: 8493960840201084423, guid: 36b52218356a3af45854ade176aa5d44, type: 3}
   explosionLifeTime: 1
   explosionKnockback: 20

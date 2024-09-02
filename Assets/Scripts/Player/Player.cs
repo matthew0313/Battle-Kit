@@ -14,23 +14,17 @@ public class Player : MonoBehaviourPunCallbacks
     [Header("Statistics")]
     [SerializeField] float maxHp;
     float hp;
-    int m_invincibility = 0;
-    public bool invincibility { get { return m_invincibility > 0; } set { if (value == false) m_invincibility--; else m_invincibility++; } }
 
     [Header("Movement")]
     [SerializeField] Rigidbody2D rb;
     [SerializeField] Transform rotator;
     [SerializeField] float moveSpeed = 1.0f;
-    int cantMove = 0;
-    public bool canMove { get { return cantMove <= 0; } set { if (value == false) cantMove++; else cantMove--; } }
 
     [Header("Dashing")]
     [SerializeField] float dashSpeed = 20.0f;
     [SerializeField] float dashDist = 3.0f;
     [SerializeField] float dashEffectRate = 0.05f;
     [SerializeField] float dashCooldown = 1.0f;
-    int cantDash = 0;
-    public bool canDash { get { return cantDash <= 0; } set { if (value == false) cantDash++; else cantDash--; } }
 
     [Header("Weapons")]
     [SerializeField] Transform weaponAnchor;
@@ -51,6 +45,14 @@ public class Player : MonoBehaviourPunCallbacks
     public Action weaponChange;
 
     public Action<float> onDamageDeal;
+
+    int cantMove = 0, cantDash = 0, cantAttack = 0, m_invincibility = 0;
+    public bool canMove { get { return cantMove <= 0; } set { if (value == false) cantMove++; else cantMove--; } }
+    public bool canDash { get { return cantDash <= 0; } set { if (value == false) cantDash++; else cantDash--; } }
+    public bool canAttack { get { return cantAttack <= 0; } set { if (value == false) cantAttack++; else cantAttack--; } }
+    public bool invincibility { get { return m_invincibility > 0; } set { if (value == false) m_invincibility--; else m_invincibility++; } }
+
+    float moveSpeedMultiplier = 1.0f, attackDamageMultiplier = 1.0f, receivedDamageMultiplier = 1.0f;
     private void Awake()
     {
         hp = maxHp;
@@ -90,6 +92,7 @@ public class Player : MonoBehaviourPunCallbacks
     }
     private void Update()
     {
+        StatusEffectUpdate();
         if (!photonView.IsMine || dead) return;
         Move();
         Rotate();
@@ -109,7 +112,7 @@ public class Player : MonoBehaviourPunCallbacks
         if (!dashing)
         {
             Vector2 move = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
-            transform.Translate(move * moveSpeed * Time.deltaTime, Space.World);
+            transform.Translate(move * moveSpeed * moveSpeedMultiplier * Time.deltaTime, Space.World);
             if(dashCooldownCounter < dashCooldown)
             {
                 photonView.RPC("SetDashCooldown", RpcTarget.All, Mathf.Min(dashCooldown, dashCooldownCounter + Time.deltaTime));
@@ -174,11 +177,19 @@ public class Player : MonoBehaviourPunCallbacks
                 weaponChange?.Invoke();
             }
         }
-        heldWeapon.OnWeaponUpdate();
+        if(canAttack) heldWeapon.OnWeaponUpdate();
     }
+    public float GetDamageValue(float damage)
+    {
+        return damage * attackDamageMultiplier;
+    }
+    public List<StatusEffect> statusEffects { get; } = new();
+    public List<StatusEffect> statusEffectRemoveQueue { get; } = new();
     void StatusEffectUpdate()
     {
-
+        foreach (var i in statusEffects) i.OnEffectUpdate();
+        statusEffects.RemoveAll((StatusEffect effect) => statusEffectRemoveQueue.Contains(effect) );
+        statusEffectRemoveQueue.Clear();
     }
     [PunRPC]
     public void SetDashCooldown(float dashCooldownCounter)
@@ -214,6 +225,42 @@ public class Player : MonoBehaviourPunCallbacks
     public void Knockback(Vector2 knockback)
     {
         rb.AddForce(knockback, ForceMode2D.Impulse);
+    }
+    [PunRPC] public void SetCanMove(bool canMove)
+    {
+        this.canMove = canMove;
+    }
+    [PunRPC] public void SetCanDash(bool canDash)
+    {
+        this.canDash = canDash;
+    }
+    [PunRPC] public void SetCanAttack(bool canAttack)
+    {
+        this.canAttack = canAttack;
+    }
+    [PunRPC] public void MultiplyMoveSpeed(float multiplier)
+    {
+        moveSpeedMultiplier *= multiplier;
+    }
+    [PunRPC] public void DivideMoveSpeed(float divided)
+    {
+        moveSpeedMultiplier /= divided;
+    }
+    [PunRPC] public void MultiplyAttackDamage(float multiplier)
+    {
+        attackDamageMultiplier *= multiplier;
+    }
+    [PunRPC] public void DivideAttackDamage(float divided)
+    {
+        attackDamageMultiplier /= divided;
+    }
+    [PunRPC] public void MultiplyReceivedDamage(float multiplier)
+    {
+        receivedDamageMultiplier *= multiplier;
+    }
+    [PunRPC] public void DivideReceivedDamage(float divided)
+    {
+        receivedDamageMultiplier /= divided;
     }
     public bool dead { get; private set; } = false;
     public Action onDeath, onRevive;

@@ -43,7 +43,7 @@ public class Slash : MonoBehaviourPun
         if (collision.CompareTag("Player"))
         {
             Player tmp = collision.GetComponent<Player>();
-            if (tmp.photonView.Owner != owner) tmp.photonView.RPC("GetDamage", RpcTarget.All, damage);
+            if (tmp.photonView.Owner != owner) tmp.photonView.RPC("GetDamage", RpcTarget.All, GameManager.Instance.myPlayer.GetDamageValue(damage));
         }
     }
 }

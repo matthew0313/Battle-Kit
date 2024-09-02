@@ -44,7 +44,7 @@ public class Bullet : MonoBehaviourPunCallbacks
     }
     protected virtual void Hit(Player target)
     {
-        target.photonView.RPC("GetDamage", RpcTarget.All, damage);
+        target.photonView.RPC("GetDamage", RpcTarget.All, GameManager.Instance.myPlayer.GetDamageValue(damage));
     }
     protected virtual void Despawn()
     {
@@ -60,6 +60,6 @@ public class Bullet : MonoBehaviourPunCallbacks
     public void Reflect(Quaternion reflectDir, Photon.Realtime.Player newOwner)
     {
         if (!reflectable) return;
-        photonView.RPC("Redirect", RpcTarget.All, reflectDir, newOwner);
+        photonView.RPC("Redirect", photonView.Owner, reflectDir, newOwner);
     }
 }

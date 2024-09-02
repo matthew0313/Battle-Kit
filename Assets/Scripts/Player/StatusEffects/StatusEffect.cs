@@ -5,7 +5,8 @@ using UnityEngine;
 
 public abstract class StatusEffect
 {
-    float durationLeft = 0.0f;
+    protected float durationLeft = 0.0f;
+    protected Player affected;
     public StatusEffect(float duration)
     {
         durationLeft = duration;
@@ -14,8 +15,33 @@ public abstract class StatusEffect
     {
         durationLeft = Mathf.Max(duration, durationLeft);
     }
-    public abstract void EffectAdd(Player affected);
+    public virtual void EffectAdd(Player affected)
+    {
+        affected.statusEffects.Add(this);
+        this.affected = affected;
+        OnEffectAdd();
+    }
     public virtual void OnEffectAdd()
+    {
+
+    }
+    public virtual void OnEffectUpdate()
+    {
+        if (durationLeft > 0.0f) durationLeft -= Time.deltaTime;
+        else
+        {
+            RemoveEffect();
+        }
+    }
+    bool removed = false;
+    public void RemoveEffect()
+    {
+        if (removed) return;
+        removed = true;
+        affected.statusEffects.Remove(this);
+        OnEffectRemove();
+    }
+    public virtual void OnEffectRemove()
     {
 
     }

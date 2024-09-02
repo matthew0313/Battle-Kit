@@ -76,6 +76,10 @@ public class Attack_Drone : Drone
             }
         }
     }
+    protected virtual void Fire()
+    {
+
+    }
     public override string AmmoDesc()
     {
         return (mode == DroneMode.Move) ? "Mode: Moving" : $"Mode: Attacking (ammo: {ammo})";

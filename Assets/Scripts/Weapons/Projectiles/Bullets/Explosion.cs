@@ -39,7 +39,7 @@ public class Explosion : MonoBehaviourPun
             Player tmp = collision.GetComponent<Player>();
             if (hit.Contains(tmp)) return;
             hit.Add(tmp);
-            tmp.photonView.RPC("GetDamage", RpcTarget.All, damage);
+            tmp.photonView.RPC("GetDamage", RpcTarget.All, GameManager.Instance.myPlayer.GetDamageValue(damage));
             tmp.photonView.RPC("Knockback", tmp.photonView.Owner, (Vector2)((tmp.transform.position - transform.position).normalized * knockback));
         }
     }
