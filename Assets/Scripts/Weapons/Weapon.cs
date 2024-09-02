@@ -7,7 +7,7 @@ using UnityEngine;
 [RequireComponent(typeof(PhotonView))]
 public abstract class Weapon : MonoBehaviourPunCallbacks
 {
-    protected Player owner;
+    public Player owner { get; private set; }
 
     [Header("Player")]
     [SerializeField] protected GameObject model;
