@@ -2,17 +2,17 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System;
 
-public class Bullet : MonoBehaviourPunCallbacks
+[RequireComponent(typeof(PhotonTransformView))]
+public class Bullet : Projectile
 {
     [SerializeField] bool reflectable = true;
     [SerializeField] bool pierce = false;
-    public Photon.Realtime.Player owner { get; private set; }
-    protected float damage, speed, range;
-    public void Set(float damage, float speed, float range)
+    protected float speed, range;
+    public void Set(float damage, float speed, float range, Action<HitInfo> onHit, string inflictingEffect)
     {
-        owner = photonView.Owner;
-        this.damage = damage;
+        base.Set(damage, onHit, inflictingEffect);
         this.speed = speed;
         this.range = range;
     }
@@ -20,7 +20,7 @@ public class Bullet : MonoBehaviourPunCallbacks
     private void Update()
     {
         if (!photonView.IsMine) return;
-        if(counter * speed < range)
+        if (counter * speed < range)
         {
             counter += Time.deltaTime;
             transform.Translate(transform.right * speed * Time.deltaTime, Space.World);
@@ -30,25 +30,20 @@ public class Bullet : MonoBehaviourPunCallbacks
             Despawn();
         }
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    protected override void OnTriggerEnter2D(Collider2D collision)
     {
         if (!photonView.IsMine) return;
-        if (collision.CompareTag("Bullet") || collision.CompareTag("Slash")) return;
+        base.OnTriggerEnter2D(collision);
+        if (!IgnoreTarget(collision) && !pierce) Despawn();
+    }
+    bool IgnoreTarget(Collider2D collision)
+    {
+        if (collision.CompareTag("BulletIgnore") || collision.CompareTag("Bullet")) return true;
         if (collision.CompareTag("Player"))
         {
-            Player tmp = collision.GetComponent<Player>();
-            if (tmp.photonView.Owner != owner) Hit(tmp);
-            else return;
+            if (collision.GetComponent<Player>().photonView.Owner == owner) return true;
         }
-        if(!pierce) Despawn();
-    }
-    protected virtual void Hit(Player target)
-    {
-        target.photonView.RPC("GetDamage", RpcTarget.All, GameManager.Instance.myPlayer.GetDamageValue(damage));
-    }
-    protected virtual void Despawn()
-    {
-        PhotonNetwork.Destroy(gameObject);
+        return false;
     }
     [PunRPC]
     public void Redirect(Quaternion reflectDir, Photon.Realtime.Player newOwner)

@@ -6,7 +6,7 @@ using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Shotgun : Gun
+public abstract class Shotgun : Gun
 {
     [Header("Shotgun")]
     [SerializeField] protected int shotCount;

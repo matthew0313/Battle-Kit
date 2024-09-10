@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 using System;
 using System.IO;
@@ -30,37 +31,54 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] Transform weaponAnchor;
     [SerializeField]
     Weapon[] primaries, secondaries, melees;
-    [SerializeField] List<Weapon> weapons = new();
+    public List<Weapon> weapons { get; } = new();
     public Weapon heldWeapon { get; private set; }
     int heldWeaponIndex = 0;
 
     [Header("Display")]
+    [SerializeField] GameObject forceField;
     [SerializeField] Transform hpScaler;
     [SerializeField] Transform dashCooldownScaler;
+    [SerializeField] Text coinText;
 
-    public List<SkillEventPair> skillList { get; } = new();
+    [Header("Score")]
+    [SerializeField] int coinsForWin = 30;
+    
+    public List<SkillEventPair> skillList = new();
     public Func<string> ammoDesc, extraDesc;
     public Func<float> barFill;
-    public Action ammoDescChange, skillDescChange;
-    public Action weaponChange;
+    public Action ammoDescChange, skillChange;
+    public Action weaponChange, loadoutChange;
 
     public Action<float> onDamageDeal;
 
-    int cantMove = 0, cantDash = 0, cantAttack = 0, m_invincibility = 0;
+    int cantMove = 0, cantRotate = 0, cantDash = 0, cantAttack = 0, cantSwapWeapon = 0, m_invincibility = 0;
     public bool canMove { get { return cantMove <= 0; } set { if (value == false) cantMove++; else cantMove--; } }
+    public bool canRotate { get { return cantRotate <= 0; } set { if (value == false) cantRotate++; else cantRotate--; } }
     public bool canDash { get { return cantDash <= 0; } set { if (value == false) cantDash++; else cantDash--; } }
     public bool canAttack { get { return cantAttack <= 0; } set { if (value == false) cantAttack++; else cantAttack--; } }
+    public bool canSwapWeapon { get { return cantSwapWeapon <= 0; } set { if (value == false) cantSwapWeapon++; else cantSwapWeapon--; } }
     public bool invincibility { get { return m_invincibility > 0; } set { if (value == false) m_invincibility--; else m_invincibility++; } }
 
-    float moveSpeedMultiplier = 1.0f, attackDamageMultiplier = 1.0f, receivedDamageMultiplier = 1.0f;
+    public float moveSpeedMultiplier = 1.0f, attackDamageMultiplier = 1.0f, receivedDamageMultiplier = 1.0f;
     private void Awake()
     {
         hp = maxHp;
-        if (photonView.IsMine)
-        {
-            FollowingCam.cam.SetTarget(transform);
-            RandomizeLoadout();
-        }
+    }
+    public void RoundStart()
+    {
+        model.SetActive(true);
+        onRevive?.Invoke();
+        RandomizeLoadout();
+        dead = false;
+        photonView.RPC("SetHp", RpcTarget.All, maxHp);
+        float randomAngle = UnityEngine.Random.Range(0.0f, 360.0f);
+        float randomDiameter = UnityEngine.Random.Range(3.0f, 5.0f);
+        transform.position = new Vector2(Mathf.Sin(randomAngle) * randomDiameter, Mathf.Cos(randomAngle) * randomDiameter);
+        photonView.RPC("SetPlayerVisibility", RpcTarget.All, true);
+        photonView.RPC("SetCoin", RpcTarget.All, 0);
+        StartCoroutine(ForceField());
+        FollowingCam.cam.SetTarget(transform);
     }
     void RandomizeLoadout()
     {
@@ -88,7 +106,9 @@ public class Player : MonoBehaviourPunCallbacks
         }
         heldWeapon = this.weapons[0];
         heldWeapon.OnWeaponEquip();
+        heldWeaponIndex = 0;
         weaponChange?.Invoke();
+        loadoutChange?.Invoke();
     }
     private void Update()
     {
@@ -156,6 +176,7 @@ public class Player : MonoBehaviourPunCallbacks
     }
     void Rotate()
     {
+        if (!canRotate) return;
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         rotator.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(rotator.position.y - mousePos.y, rotator.position.x - mousePos.x) * Mathf.Rad2Deg);
         if(heldWeapon != null)
@@ -166,15 +187,19 @@ public class Player : MonoBehaviourPunCallbacks
     }
     void WeaponUpdate()
     {
-        for(int i = 0; i < weapons.Count; i++)
+        if (canSwapWeapon)
         {
-            if (heldWeaponIndex != i &&  Input.GetKeyDown(KeyCode.Alpha1 + i))
+            for (int i = 0; i < weapons.Count; i++)
             {
-                heldWeapon.OnWeaponUnequip();
-                heldWeapon = weapons[i];
-                heldWeaponIndex = i;
-                heldWeapon.OnWeaponEquip();
-                weaponChange?.Invoke();
+                if (heldWeaponIndex != i && Input.GetKeyDown(KeyCode.Alpha1 + i))
+                {
+                    heldWeapon.OnWeaponUnequip();
+                    heldWeapon = weapons[i];
+                    heldWeaponIndex = i;
+                    heldWeapon.OnWeaponEquip();
+                    weaponChange?.Invoke();
+                    break;
+                }
             }
         }
         if(canAttack) heldWeapon.OnWeaponUpdate();
@@ -184,12 +209,49 @@ public class Player : MonoBehaviourPunCallbacks
         return damage * attackDamageMultiplier;
     }
     public List<StatusEffect> statusEffects { get; } = new();
-    public List<StatusEffect> statusEffectRemoveQueue { get; } = new();
+    public List<StatusEffect> removeQueue { get; } = new();
+    [PunRPC] public void AddStatusEffect(string effectName)
+    {
+        if (dead || invincibility) return;
+        Resources.Load<StatusEffectData>(Path.Combine("Status Effects", "Datas", effectName)).AddEffectToPlayer(this);
+    }
+    public bool FindStatusEffect<T>(out T found) where T : StatusEffect
+    {
+        foreach(var i in statusEffects)
+        {
+            if (i is T)
+            {
+                found = i as T;
+                return true;
+            }
+        }
+        found = null;
+        return false;
+    }
+    public bool FindStatusEffect(StatusEffectData data, out StatusEffect found)
+    {
+        foreach (var i in statusEffects)
+        {
+            if (i.data == data)
+            {
+                found = i;
+                return true;
+            }
+        }
+        found = null;
+        return false;
+    }
     void StatusEffectUpdate()
     {
         foreach (var i in statusEffects) i.OnEffectUpdate();
-        statusEffects.RemoveAll((StatusEffect effect) => statusEffectRemoveQueue.Contains(effect) );
-        statusEffectRemoveQueue.Clear();
+        if(removeQueue.Count > 0)
+        {
+            foreach (var i in removeQueue)
+            {
+                statusEffects.Remove(i);
+            }
+            removeQueue.Clear();
+        }
     }
     [PunRPC]
     public void SetDashCooldown(float dashCooldownCounter)
@@ -203,17 +265,34 @@ public class Player : MonoBehaviourPunCallbacks
         this.hp = hp;
         hpScaler.localScale = new Vector2(hp/maxHp, 1.0f);
     }
+    public Action<float> onDamage;
     [PunRPC]
     public void GetDamage(float damage)
     {
-        if (invincibility || hp == 0) return;
-        if (photonView.IsMine)
+        if (dead) return;
+        if (invincibility)
         {
-            GameManager.Instance.UIs.DamageText(damage, transform.position);
+            GameManager.Instance.UIs.DamageText(0.0f, transform.position, Color.black);
+            return;
         }
-        hp = Mathf.Max(0, hp - damage);
-        hpScaler.localScale = new Vector2(hp / maxHp, 1.0f);
-        if (hp <= 0 && photonView.IsMine) Death();
+        GameManager.Instance.UIs.DamageText(damage, transform.position);
+        photonView.RPC("SetHp", RpcTarget.All, Mathf.Max(0, hp - damage));
+        onDamage?.Invoke(damage);
+        if (hp <= 0) Death();
+    }
+    [PunRPC]
+    public void GetDamageColor(float damage, Vector3 color)
+    {
+        if (dead) return;
+        if (invincibility)
+        {
+            GameManager.Instance.UIs.DamageText(0.0f, transform.position, Color.black);
+            return;
+        }
+        GameManager.Instance.UIs.DamageText(damage, transform.position, new Color(color.x, color.y, color.z));
+        photonView.RPC("SetHp", RpcTarget.All, Mathf.Max(0, hp - damage));
+        onDamage?.Invoke(damage);
+        if (hp <= 0) Death();
     }
     [PunRPC]
     public void SetPlayerVisibility(bool playerActive)
@@ -224,6 +303,7 @@ public class Player : MonoBehaviourPunCallbacks
     [PunRPC]
     public void Knockback(Vector2 knockback)
     {
+        if (dead || invincibility) return;
         rb.AddForce(knockback, ForceMode2D.Impulse);
     }
     [PunRPC] public void SetCanMove(bool canMove)
@@ -264,6 +344,23 @@ public class Player : MonoBehaviourPunCallbacks
     }
     public bool dead { get; private set; } = false;
     public Action onDeath, onRevive;
+
+    public int coins { get; private set; } = 0;
+    public Action onCoinEdit;
+    public void EarnCoin()
+    {
+        photonView.RPC("SetCoin", RpcTarget.All, ++coins);
+        onCoinEdit?.Invoke();
+        if(coins >= coinsForWin)
+        {
+            GameManager.Instance.WinGame();
+        }
+    }
+    [PunRPC] public void SetCoin(int coins)
+    {
+        this.coins = coins;
+        coinText.text = coins.ToString();
+    }
     public void Death()
     {
         onDeath?.Invoke();
@@ -274,36 +371,70 @@ public class Player : MonoBehaviourPunCallbacks
             weapons.RemoveAt(0);
         }
         photonView.RPC("SetPlayerVisibility", RpcTarget.All, false);
+        int droppedCoins = coins / 2;
+        for(int i = 0; i < droppedCoins; i++)
+        {
+            float deg = UnityEngine.Random.Range(0.0f, 360.0f);
+            float diam = UnityEngine.Random.Range(0.0f, 3.0f);
+            GameManager.Instance.photonView.RPC("SpawnCoin", RpcTarget.MasterClient, (Vector2)transform.position + new Vector2(Mathf.Cos(deg), Mathf.Sin(deg)) * diam);
+        }
+        photonView.RPC("SetCoin", RpcTarget.All, coins / 2 + coins % 2);
         //if(killer != null) FollowingCam.cam.SetTarget((killer as Player).transform);
         StartCoroutine(DeathCounter());
     }
     IEnumerator DeathCounter()
     {
         yield return new WaitForSeconds(3.0f);
+        model.SetActive(true);
         onRevive?.Invoke();
         RandomizeLoadout();
         dead = false;
         photonView.RPC("SetHp", RpcTarget.All, maxHp);
-        transform.position = new Vector2(UnityEngine.Random.Range(-5.0f, 5.0f), UnityEngine.Random.Range(-5.0f, 5.0f));
+        float randomAngle = UnityEngine.Random.Range(0.0f, 360.0f);
+        float randomDiameter = UnityEngine.Random.Range(3.0f, 5.0f);
+        transform.position = new Vector2(Mathf.Sin(randomAngle) * randomDiameter, Mathf.Cos(randomAngle) * randomDiameter);
         photonView.RPC("SetPlayerVisibility", RpcTarget.All, true);
+        StartCoroutine(ForceField());
         FollowingCam.cam.SetTarget(transform);
     }
+    WaitForSeconds forceFieldTime = new WaitForSeconds(5.0f);
+    bool forceFieldOn = false;
+    IEnumerator ForceField()
+    {
+        forceFieldOn = true;
+        invincibility = true;
+        photonView.RPC("SetForceFieldVisibility", RpcTarget.All, true);
+        yield return forceFieldTime;
+        forceFieldOn = false;
+        invincibility = false;
+        photonView.RPC("SetForceFieldVisibility", RpcTarget.All, false);
+    }
+    [PunRPC] public void SetForceFieldVisibility(bool visibility) => forceField.SetActive(visibility);
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
         if (photonView.IsMine)
         {
             photonView.RPC("SetHp", newPlayer, hp);
             if (dead) photonView.RPC("SetPlayerActive", newPlayer, false);
+            if (forceFieldOn) photonView.RPC("SetForceFieldVisibility", newPlayer, true);
         }
     }
 }
 public class SkillEventPair
 {
+    public SkillEventPair()
+    {
+
+    }
+    public SkillEventPair(Func<float> skillBarFill)
+    {
+        this.skillBarFill = skillBarFill;
+    }
     public SkillEventPair(Func<float> skillBarFill, Func<string> skillDesc)
     {
         this.skillBarFill = skillBarFill;
         this.skillDesc = skillDesc;
     }
-    public readonly Func<float> skillBarFill;
-    public readonly Func<string> skillDesc;
+    public Func<float> skillBarFill;
+    public Func<string> skillDesc;
 }

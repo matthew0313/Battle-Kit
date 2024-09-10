@@ -2,20 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System;
 
-[RequireComponent(typeof(PhotonView))]
-public class Explosion : MonoBehaviourPun
+[RequireComponent(typeof(PhotonTransformView))]
+public class Explosion : Projectile
 {
     [SerializeField] SpriteRenderer rend;
-    float damage, lifeTime, knockback, counter = 0.0f;
+    float lifeTime, knockback, counter = 0.0f;
     Color color;
-    public void Set(float damage, float lifeTime, float knockback, float size)
+    private void Awake()
     {
-        this.damage = damage;
+        color = rend.color;
+    }
+    public void Set(float damage, float lifeTime, float knockback, float size, Action<HitInfo> onHit, string inflictingEffect)
+    {
+        base.Set(damage, onHit, inflictingEffect);
         this.lifeTime = lifeTime;
         this.knockback = knockback;
-        photonView.RPC("SetDefaults", RpcTarget.All, size);
-        color = rend.color;
+        this.onHit = onHit;
+        transform.localScale = new Vector2(size * 2, size * 2);
     }
     private void Update()
     {
@@ -27,32 +32,35 @@ public class Explosion : MonoBehaviourPun
         }
         else
         {
-            PhotonNetwork.Destroy(gameObject);
+            Despawn();
         }
     }
-    List<Player> hit = new();
-    private void OnTriggerEnter2D(Collider2D collision)
+    /*private void OnTriggerEnter2D(Collider2D collision)
     {
         if (!photonView.IsMine) return;
         if (collision.CompareTag("Player"))
         {
+            Debug.Log("HITTTT");
             Player tmp = collision.GetComponent<Player>();
             if (hit.Contains(tmp)) return;
             hit.Add(tmp);
-            tmp.photonView.RPC("GetDamage", RpcTarget.All, GameManager.Instance.myPlayer.GetDamageValue(damage));
+            float scaledDamage = GameManager.Instance.myPlayer.GetDamageValue(damage);
+            tmp.photonView.RPC("GetDamage", tmp.photonView.Owner, scaledDamage);
             tmp.photonView.RPC("Knockback", tmp.photonView.Owner, (Vector2)((tmp.transform.position - transform.position).normalized * knockback));
+            HitInfo info;
+            info.hitPlayer = tmp;
+            onHit?.Invoke(scaledDamage);
         }
+    }*/
+    protected override void Hit(Player target)
+    {
+        base.Hit(target);
+        target.photonView.RPC("Knockback", target.photonView.Owner, (Vector2)((target.transform.position - transform.position).normalized * knockback));
     }
     [PunRPC]
     public void Dissolve(float newAlpha)
     {
         color.a = newAlpha;
         rend.color = color;
-    }
-    [PunRPC]
-    public void SetDefaults(float scale)
-    {
-        transform.localScale = new Vector2(scale * 2, scale * 2);
-        color = rend.color;
     }
 }

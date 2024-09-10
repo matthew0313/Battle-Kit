@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 274781920198132267}
   - component: {fileID: 2698000250596535000}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -72,7 +72,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 1bb2e45ab9d49164f906d4748fabaa08, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -99,9 +99,9 @@ GameObject:
   - component: {fileID: 3007097886716290361}
   - component: {fileID: 835182202037298348}
   - component: {fileID: 2320054156913628218}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: FlyingSlash
-  m_TagString: Slash
+  m_TagString: BulletIgnore
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -116,7 +116,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1, y: 2, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 274781920198132267}
@@ -258,4 +258,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   reflectable: 0
-  pierce: 0
+  pierce: 1

@@ -7,22 +7,21 @@ using UnityEngine;
 [RequireComponent(typeof(PhotonView))]
 public abstract class Weapon : MonoBehaviourPunCallbacks
 {
-    protected Player owner;
+    public Player owner { get; private set; }
 
-    [Header("Player")]
+    [Header("Weapon")]
+    [SerializeField] string m_weaponName;
+    public string weaponName { get { return m_weaponName; } }
+    [SerializeField] Sprite m_weaponImage;
+    public Sprite weaponImage { get { return m_weaponImage; } }
     [SerializeField] protected GameObject model;
     [SerializeField] protected Animator anim;
-    protected bool equipped = false;
-
-    private void Awake()
-    {
-        if (!photonView.IsMine) model.SetActive(false);
-    }
+    protected internal bool equipped = false;
+    protected internal List<SkillEventPair> skillList = new();
     public virtual void Set(Player owner)
     {
         this.owner = owner;
-        model.SetActive(false);
-        transform.localScale = Vector2.one;
+        photonView.RPC("ModelVisibility", RpcTarget.All, false);
     }
     public virtual void OnWeaponEquip()
     {
@@ -30,6 +29,7 @@ public abstract class Weapon : MonoBehaviourPunCallbacks
         photonView.RPC("ModelVisibility", RpcTarget.All, true);
         owner.barFill += BarFill;
         owner.ammoDesc += AmmoDesc;
+        owner.skillList = skillList;
     }
     public virtual void OnWeaponUpdate()
     {

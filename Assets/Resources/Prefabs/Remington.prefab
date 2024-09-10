@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 1303574832281091768}
   - component: {fileID: 6379093478923990828}
   - component: {fileID: 1655437559636477843}
-  - component: {fileID: 5586670117533386497}
   - component: {fileID: -5956642562864476709}
+  - component: {fileID: -6831975609124504942}
   m_Layer: 0
   m_Name: Remington
   m_TagString: Untagged
@@ -104,32 +104,6 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &5586670117533386497
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 501957628579462410}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: badad2979bbab4f44ab5cb6db793cca2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  model: {fileID: 9134901527716901348}
-  anim: {fileID: 6379093478923990828}
-  auto: 0
-  damage: 3
-  fireRate: 1
-  bulletSpeed: 25
-  bulletRange: 8
-  reloadTime: 5
-  magSize: 6
-  maxAmmo: 30
-  bullet: {fileID: 71068146975388705, guid: 533694720601f4342923a18edbd9ce69, type: 3}
-  firePoint: {fileID: 4190565276834585009}
-  shotCount: 10
-  spread: 5
 --- !u!114 &-5956642562864476709
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -146,6 +120,34 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
   m_UseLocal: 0
+--- !u!114 &-6831975609124504942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501957628579462410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce8061a4e6e949c4f900df18a9abe840, type: 3}
+  m_Name: "\uB808\uBC0D\uD134 870"
+  m_EditorClassIdentifier: 
+  m_weaponName: "\uB808\uBC0D\uD134 870"
+  m_weaponImage: {fileID: 21300000, guid: 4ae3f8621fccdc9448ec1acb7e43bb6a, type: 3}
+  model: {fileID: 9134901527716901348}
+  anim: {fileID: 6379093478923990828}
+  auto: 0
+  damage: 3
+  fireRate: 1
+  bulletSpeed: 25
+  bulletRange: 8
+  reloadTime: 5
+  magSize: 6
+  maxAmmo: 24
+  bullet: {fileID: 71068146975388705, guid: 533694720601f4342923a18edbd9ce69, type: 3}
+  firePoint: {fileID: 4190565276834585009}
+  shotCount: 10
+  spread: 10
 --- !u!1 &2593513249573842339
 GameObject:
   m_ObjectHideFlags: 0

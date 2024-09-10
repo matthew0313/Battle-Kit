@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
+using System;
 
-public class Gun : Weapon
+public abstract class Gun : Weapon
 {
     [Header("Gun")]
     [SerializeField] protected bool auto = false;
@@ -64,7 +65,8 @@ public class Gun : Weapon
     }
     protected virtual void FireBullet(Vector2 position, Quaternion rotation)
     {
-        PhotonNetwork.Instantiate(Path.Combine("Prefabs", bullet.gameObject.name), position, rotation).GetComponent<Bullet>().Set(damage, bulletSpeed, bulletRange);
+        Bullet tmp = PhotonNetwork.Instantiate(Path.Combine("Prefabs", bullet.gameObject.name), position, rotation).GetComponent<Bullet>();
+        tmp.Set(damage, bulletSpeed, bulletRange, null, null);
     }
     protected override void Update()
     {

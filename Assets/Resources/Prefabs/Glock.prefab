@@ -127,8 +127,8 @@ GameObject:
   - component: {fileID: 7190413342084752515}
   - component: {fileID: 8687903551200604734}
   - component: {fileID: 5668526116943403667}
-  - component: {fileID: 5933091864567038558}
   - component: {fileID: 7393786652993794449}
+  - component: {fileID: 1966008914193643627}
   m_Layer: 0
   m_Name: Glock
   m_TagString: Untagged
@@ -219,30 +219,6 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &5933091864567038558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7479600549515458900}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5c7338398f56494283b1a8b3398b749, type: 3}
-  m_Name: Glock
-  m_EditorClassIdentifier: 
-  model: {fileID: 5071271601722906378}
-  anim: {fileID: 8687903551200604734}
-  auto: 0
-  damage: 10
-  fireRate: 0.2
-  bulletSpeed: 20
-  bulletRange: 20
-  reloadTime: 2
-  magSize: 12
-  maxAmmo: 60
-  bullet: {fileID: 71068146975388705, guid: 533694720601f4342923a18edbd9ce69, type: 3}
-  firePoint: {fileID: 141276708819347722}
 --- !u!114 &7393786652993794449
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -259,3 +235,29 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
   m_UseLocal: 0
+--- !u!114 &1966008914193643627
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7479600549515458900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9311c48b01af154468b3fa63e82decc8, type: 3}
+  m_Name: "\uAE00\uB85D"
+  m_EditorClassIdentifier: 
+  m_weaponName: "\uAE00\uB85D"
+  m_weaponImage: {fileID: 21300000, guid: e23937471deef0e4da7ccb928d9b69f1, type: 3}
+  model: {fileID: 5071271601722906378}
+  anim: {fileID: 8687903551200604734}
+  auto: 0
+  damage: 12
+  fireRate: 0.2
+  bulletSpeed: 20
+  bulletRange: 20
+  reloadTime: 2
+  magSize: 12
+  maxAmmo: 96
+  bullet: {fileID: 71068146975388705, guid: 533694720601f4342923a18edbd9ce69, type: 3}
+  firePoint: {fileID: 141276708819347722}

@@ -14,18 +14,25 @@ public class GameManager_UIs : MonoBehaviourPunCallbacks
     [SerializeField] DamageText damageText;
     [SerializeField] Transform skillUIParent;
     [SerializeField] SkillUIElement skillUIElement;
+    [SerializeField]
+    Image[] weaponImages = new Image[3];
+    [SerializeField]
+    Text[] weaponNames = new Text[3];
     List<SkillUIElement> skillUIs = new();
     public void OnAwake()
     {
         origin = GetComponent<GameManager>();
         origin.myPlayer.weaponChange += WeaponName;
         origin.myPlayer.weaponChange += AmmoDesc;
-        origin.myPlayer.weaponChange += ExtraDesc;
         origin.myPlayer.weaponChange += SetSkillBar;
+        origin.myPlayer.loadoutChange += LoadoutChange;
         origin.myPlayer.ammoDescChange += AmmoDesc;
-        origin.myPlayer.skillDescChange += SetSkillDesc;
+        origin.myPlayer.skillChange += SetSkillBar;
         origin.myPlayer.onDeath += () => { anim.SetBool("Dead", true); };
         origin.myPlayer.onRevive += () => { anim.SetBool("Dead", false); };
+        origin.onRoundStateSet += RoundStateChange;
+        origin.onRoundStart += OnRoundStart;
+        origin.onRoundEnd += OnRoundEnd;
     }
     private void Start()
     {
@@ -49,8 +56,7 @@ public class GameManager_UIs : MonoBehaviourPunCallbacks
         }
         else
         {
-            string tmp = origin.myPlayer.heldWeapon.name;
-            weaponName.text = tmp.Replace("(Clone)", "").Trim();
+            weaponName.text = origin.myPlayer.heldWeapon.weaponName;
         }
     }
     void WeaponBar()
@@ -75,11 +81,7 @@ public class GameManager_UIs : MonoBehaviourPunCallbacks
         {
             skillUIs[i].gameObject.SetActive(false);
         }
-        SetSkillDesc();
-    }
-    void SetSkillDesc()
-    {
-        for(int i = 0; i < origin.myPlayer.skillList.Count; i++)
+        for (i = 0; i < origin.myPlayer.skillList.Count; i++)
         {
             skillUIs[i].skillName.text = origin.myPlayer.skillList[i].skillDesc.Invoke();
         }
@@ -88,7 +90,15 @@ public class GameManager_UIs : MonoBehaviourPunCallbacks
     {
         for(int i = 0; i < origin.myPlayer.skillList.Count; i++)
         {
-            skillUIs[i].skillBar.localScale = new Vector2(origin.myPlayer.skillList[i].skillBarFill.Invoke(), 1.0f);
+            skillUIs[i].skillBar.localScale = new Vector2(Mathf.Clamp(origin.myPlayer.skillList[i].skillBarFill.Invoke(), 0.0f, 1.0f), 1.0f);
+        }
+    }
+    void LoadoutChange()
+    {
+        for(int i = 0; i < 3; i++)
+        {
+            weaponImages[i].sprite = origin.myPlayer.weapons[i].weaponImage;
+            weaponNames[i].text = origin.myPlayer.weapons[i].weaponName;
         }
     }
     public void DamageText(float damage, Vector2 position)
@@ -107,9 +117,42 @@ public class GameManager_UIs : MonoBehaviourPunCallbacks
             tmp.Set(damage.ToString(), new Color(1, 1, 0), new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized);
         }
     }
-    void ExtraDesc()
+    public void DamageText(float damage, Vector2 position, Color color)
     {
-        if (origin.myPlayer.extraDesc == null) extraDesc.text = "";
-        else extraDesc.text = origin.myPlayer.extraDesc.Invoke();
+        DamageText tmp = PhotonNetwork.Instantiate(Path.Combine("Effects", damageText.gameObject.name), position, Quaternion.identity).GetComponent<DamageText>();
+        if (damage >= 40.0f)
+        {
+            tmp.Set(damage.ToString() + "!!", color, new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized);
+        }
+        else if (damage >= 20.0f)
+        {
+            tmp.Set(damage.ToString() + "!", color, new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized);
+        }
+        else
+        {
+            tmp.Set(damage.ToString(), color, new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized);
+        }
+    }
+    void RoundStateChange()
+    {
+        if (origin.roundInProgress)
+        {
+            anim.Play("RoundInProgress");
+        }
+    }
+    void OnRoundEnd()
+    {
+        if (origin.winner)
+        {
+            anim.Play("RoundWon");
+        }
+        else
+        {
+            anim.Play("RoundLost");
+        }
+    }
+    void OnRoundStart()
+    {
+        anim.Play("RoundInProgress");
     }
 }

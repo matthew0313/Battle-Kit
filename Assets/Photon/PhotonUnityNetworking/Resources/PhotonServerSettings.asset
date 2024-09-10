@@ -56,6 +56,24 @@ MonoBehaviour:
   - MultiplyMoveSpeed
   - SetCanDash
   - SetCanMove
+  - DivideAttackDamage
+  - DivideReceivedDamage
+  - MultiplyAttackDamage
+  - MultiplyReceivedDamage
+  - SetCanAttack
+  - HighNoonText
+  - SetIndicatorActive
+  - IndicateDamage
+  - SetForceFieldVisibility
+  - AddStatusEffect
+  - GetDamageColor
+  - EndRound
+  - SetInfos
+  - SetTotalPlayers
+  - StartRound
+  - SetCoin
+  - DestroyCoin
+  - SpawnCoin
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1

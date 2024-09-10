@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 1303574832281091768}
   - component: {fileID: 6379093478923990828}
   - component: {fileID: 1655437559636477843}
-  - component: {fileID: 8427032264552822509}
   - component: {fileID: 5468711833862210047}
+  - component: {fileID: 5902771349773398349}
   m_Layer: 0
   m_Name: Rocket Launcher
   m_TagString: Untagged
@@ -104,30 +104,6 @@ MonoBehaviour:
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
---- !u!114 &8427032264552822509
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 501957628579462410}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a5c7338398f56494283b1a8b3398b749, type: 3}
-  m_Name: AK-47
-  m_EditorClassIdentifier: 
-  model: {fileID: 9134901527716901348}
-  anim: {fileID: 6379093478923990828}
-  auto: 1
-  damage: 80
-  fireRate: 1
-  bulletSpeed: 10
-  bulletRange: 10
-  reloadTime: 10
-  magSize: 1
-  maxAmmo: 5
-  bullet: {fileID: 8083076391083790942, guid: 3fc3d865ef0c0bc4c8187c2a56f59dd2, type: 3}
-  firePoint: {fileID: 4190565276834585009}
 --- !u!114 &5468711833862210047
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -144,6 +120,32 @@ MonoBehaviour:
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 1
   m_UseLocal: 0
+--- !u!114 &5902771349773398349
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 501957628579462410}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c6e41b2e22671744b0491905ef0938e, type: 3}
+  m_Name: "\uB85C\uCF13 \uB7F0\uCCD0"
+  m_EditorClassIdentifier: 
+  m_weaponName: "\uB85C\uCF13 \uB7F0\uCCD0"
+  m_weaponImage: {fileID: 21300000, guid: fe1d7367188ffa74e895de25850bc55e, type: 3}
+  model: {fileID: 9134901527716901348}
+  anim: {fileID: 6379093478923990828}
+  auto: 0
+  damage: 100
+  fireRate: 0.1
+  bulletSpeed: 10
+  bulletRange: 10
+  reloadTime: 10
+  magSize: 1
+  maxAmmo: 4
+  bullet: {fileID: 8083076391083790942, guid: 7b5e7b6473cc60d4b9391216e6bad1a9, type: 3}
+  firePoint: {fileID: 4190565276834585009}
 --- !u!1 &2593513249573842339
 GameObject:
   m_ObjectHideFlags: 0

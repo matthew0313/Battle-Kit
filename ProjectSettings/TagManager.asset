@@ -4,8 +4,8 @@
 TagManager:
   serializedVersion: 2
   tags:
+  - BulletIgnore
   - Bullet
-  - Slash
   - Melee
   layers:
   - Default
@@ -14,10 +14,10 @@ TagManager:
   - Player
   - Water
   - UI
-  - Bullet
+  - Projectile
   - Map
-  - Slash
-  - 
+  - PlayerDetector
+  - Coin
   - 
   - 
   - 

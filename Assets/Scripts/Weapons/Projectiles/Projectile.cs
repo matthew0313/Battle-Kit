@@ -1,0 +1,63 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using Photon.Pun;
+using System;
+using Unity.VisualScripting;
+
+[RequireComponent(typeof(PhotonView))]
+public abstract class Projectile : MonoBehaviourPunCallbacks
+{
+    public Photon.Realtime.Player owner { get; protected set; }
+    protected float damage;
+    protected Action<HitInfo> onHit;
+    protected List<Player> hit = new();
+    protected string inflictingEffect = null;
+    protected void Set(float damage, Action<HitInfo> onHit, string inflictingEffect)
+    {
+        owner = photonView.Owner;
+        this.damage = damage;
+        this.onHit = onHit;
+        this.inflictingEffect = inflictingEffect;
+    }
+    protected virtual void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!photonView.IsMine) return;
+        if (collision.CompareTag("Player"))
+        {
+            Player tmp = collision.GetComponent<Player>();
+            if (tmp.photonView.Owner == owner || hit.Contains(tmp)) return;
+            hit.Add(tmp);
+            Hit(tmp);
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (!photonView.IsMine) return;
+        if (collision.CompareTag("Player"))
+        {
+            Player tmp = collision.GetComponent<Player>();
+            if (tmp.photonView.Owner == owner || !hit.Contains(tmp)) return;
+            hit.Remove(tmp);
+        }
+    }
+    protected virtual void Hit(Player target)
+    {
+        float scaledDamage = GameManager.Instance.myPlayer.GetDamageValue(damage);
+        target.photonView.RPC("GetDamage", target.photonView.Owner, scaledDamage);
+        if (inflictingEffect != null) target.photonView.RPC("AddStatusEffect", target.photonView.Owner, inflictingEffect);
+        HitInfo info;
+        info.hitPlayer = target;
+        info.hitDamage = scaledDamage;
+        onHit?.Invoke(info);
+    }
+    protected virtual void Despawn()
+    {
+        PhotonNetwork.Destroy(gameObject);
+    }
+}
+public struct HitInfo
+{
+    public float hitDamage;
+    public Player hitPlayer;
+}

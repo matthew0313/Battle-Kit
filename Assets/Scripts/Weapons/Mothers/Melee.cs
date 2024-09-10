@@ -6,13 +6,13 @@ using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class Melee : Weapon
+public abstract class Melee : Weapon
 {
     [Header("Melee")]
-    [SerializeField] float damage;
-    [SerializeField] float slashRate, slashLifetime;
-    [SerializeField] Slash slash;
-    [SerializeField] Transform slashPoint;
+    [SerializeField] protected float damage;
+    [SerializeField] protected float slashRate, slashLifetime;
+    [SerializeField] protected Slash slash;
+    [SerializeField] protected Transform slashPoint;
     float counter = 0.0f;
     public override void OnWeaponUpdate()
     {
@@ -25,8 +25,8 @@ public class Melee : Weapon
     }
     protected virtual void Slash()
     {
-        if (anim != null) anim.SetTrigger("Slash");
-        PhotonNetwork.Instantiate(Path.Combine("Prefabs", slash.gameObject.name), slashPoint.position, slashPoint.rotation).GetComponent<Slash>().Set(damage, slashLifetime);
+        anim.SetTrigger("Slash");
+        PhotonNetwork.Instantiate(Path.Combine("Prefabs", slash.gameObject.name), slashPoint.position, slashPoint.rotation).GetComponent<Slash>().Set(damage, slashLifetime, null, null);
     }
     protected override void Update()
     {

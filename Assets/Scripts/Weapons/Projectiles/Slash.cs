@@ -2,20 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
+using System;
 
-[RequireComponent(typeof(PhotonView), typeof(Reflector))]
-public class Slash : MonoBehaviourPun
+[RequireComponent(typeof(PhotonView))]
+public class Slash : Projectile
 {
     [SerializeField] SpriteRenderer rend;
-    Photon.Realtime.Player owner;
-    float damage, lifeTime;
+    float lifeTime;
     Color color;
-    public void Set(float damage, float lifeTime)
+    private void Awake()
     {
-        owner = photonView.Owner;
-        this.damage = damage;
+        color = rend.color;
+    }
+    public void Set(float damage, float lifeTime, Action<HitInfo> onHit, string inflictingEffect)
+    {
+        base.Set(damage, onHit, inflictingEffect);
         this.lifeTime = lifeTime;
-        color = Color.white;
     }
     float counter = 0.0f;
     private void Update()
@@ -28,7 +30,7 @@ public class Slash : MonoBehaviourPun
         }
         else
         {
-            PhotonNetwork.Destroy(gameObject);
+            Despawn();
         }
     }
     [PunRPC]
@@ -36,14 +38,5 @@ public class Slash : MonoBehaviourPun
     {
         color.a = newAlpha;
         rend.color = color;
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-        if (!photonView.IsMine) return;
-        if (collision.CompareTag("Player"))
-        {
-            Player tmp = collision.GetComponent<Player>();
-            if (tmp.photonView.Owner != owner) tmp.photonView.RPC("GetDamage", RpcTarget.All, GameManager.Instance.myPlayer.GetDamageValue(damage));
-        }
     }
 }
