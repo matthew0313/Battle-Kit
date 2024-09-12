@@ -7,11 +7,12 @@ using Unity.VisualScripting;
 using UnityEngine;
 public class Sword : Melee
 {
-    [Header("Knife")]
+    [Header("Sword")]
     [SerializeField] float flyingSlashDamage;
     [SerializeField] float flyingSlashFireRate, flyingSlashSpeed, flyingSlashRange;
     [SerializeField] Bullet flyingSlash;
     [SerializeField] Transform firePoint;
+    [SerializeField] AudioClip flyingSlashSound;
     SkillEventPair flyingSlashSkill;
     float flyingSlashCounter = 0.0f;
     public override void Set(Player owner)
@@ -28,10 +29,15 @@ public class Sword : Melee
             if (Input.GetKeyDown(KeyCode.E))
             {
                 flyingSlashCounter -= flyingSlashFireRate;
-                anim.SetTrigger("FlyingSlash");
-                PhotonNetwork.Instantiate(Path.Combine("Prefabs", flyingSlash.gameObject.name), firePoint.position, firePoint.rotation).GetComponent<Bullet>().Set(flyingSlashDamage, flyingSlashSpeed, flyingSlashRange);
+                FlyingSlash();
             }
         }
+    }
+    void FlyingSlash()
+    {
+        if(flyingSlashSound != null) GameManager.Instance.PlaySound(photonView, flyingSlashSound);
+        anim.SetTrigger("FlyingSlash");
+        PhotonNetwork.Instantiate(Path.Combine("Prefabs", flyingSlash.gameObject.name), firePoint.position, firePoint.rotation).GetComponent<Bullet>().Set(flyingSlashDamage, flyingSlashSpeed, flyingSlashRange);
     }
     protected override void Update()
     {

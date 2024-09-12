@@ -17,6 +17,7 @@ public class Revolver : Gun
     [SerializeField] GameObject highNoonRangeIndicator;
     [SerializeField] Text highNoonText;
     [SerializeField] float highNoonMoveSpeed = 0.25f;
+    [SerializeField] AudioClip highNoonSound;
     float highNoonCounter = 0.0f;
     int hitCount = 0;
     private void Awake()
@@ -61,6 +62,7 @@ public class Revolver : Gun
     WaitForSeconds interval = new WaitForSeconds(0.2f);
     IEnumerator HighNoon()
     {
+        if (highNoonSound != null) GameManager.Instance.PlaySound(owner.photonView, highNoonSound);
         owner.canAttack = false;
         owner.canDash = false;
         owner.canSwapWeapon = false;
@@ -77,6 +79,7 @@ public class Revolver : Gun
             mag--;
             Debug.Log(ammo);
             owner.ammoDescChange?.Invoke();
+            GameManager.Instance.PlaySound(photonView, fireSound);
             anim.SetTrigger("Fire");
             float scaledDamage = owner.GetDamageValue(highNoonDamage);
             i.photonView.RPC("GetDamage", i.photonView.Owner, scaledDamage);

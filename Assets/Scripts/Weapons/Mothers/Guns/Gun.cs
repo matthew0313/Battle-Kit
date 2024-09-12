@@ -14,6 +14,7 @@ public abstract class Gun : Weapon
     [SerializeField] protected int magSize, maxAmmo;
     [SerializeField] protected Bullet bullet;
     [SerializeField] protected Transform firePoint;
+    [SerializeField] protected AudioClip fireSound, reloadSound;
     protected float counter = 0.0f, reloadCounter = 0.0f;
     protected int ammo, mag;
     protected bool reloading = false;
@@ -38,6 +39,7 @@ public abstract class Gun : Weapon
     }
     protected virtual void Reload()
     {
+        if(reloadSound != null) GameManager.Instance.PlaySound(photonView, reloadSound);
         reloading = true;
         reloadCounter = 0.0f;
         StartCoroutine(Reloading());
@@ -64,6 +66,7 @@ public abstract class Gun : Weapon
     }
     protected virtual void Fire()
     {
+        if(fireSound != null) GameManager.Instance.PlaySound(photonView, fireSound);
         anim.SetTrigger("Fire");
         FireBullet(firePoint.position, firePoint.rotation);
     }

@@ -10,6 +10,7 @@ public class DamageMarkData : StatusEffectData
 {
     [Header("Damage Mark")]
     [SerializeField] internal float markDamage;
+    [SerializeField] internal AudioClip markDamageSound;
     protected override StatusEffect GetEffect()
     {
         return new DamageMark(this);
@@ -27,6 +28,7 @@ public class DamageMark : StatusEffect
         base.OnStackAdd();
         if (stack >= data.maxStack)
         {
+            GameManager.Instance.PlaySound(affected.photonView, data.markDamageSound);
             GameManager.Instance.UIs.DamageText(data.markDamage, affected.transform.position, data.debuffColor.ToVector());
             affected.photonView.RPC("GetDamage", affected.photonView.Owner, data.markDamage);
             EndEffect();

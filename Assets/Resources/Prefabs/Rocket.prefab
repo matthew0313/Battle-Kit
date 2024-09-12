@@ -369,3 +369,4 @@ MonoBehaviour:
   explosionLifeTime: 0.5
   explosionKnockback: 20
   explosionSize: 3
+  explosionSound: {fileID: 8300000, guid: 761d1aba87c77564b8ff49950c7b4323, type: 3}

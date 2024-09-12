@@ -631,16 +631,18 @@ MonoBehaviour:
   model: {fileID: 748402401169680099}
   anim: {fileID: -4313900806241898171}
   auto: 0
-  damage: 15
+  damage: 12
   fireRate: 0.35
   bulletSpeed: 30
   bulletRange: 30
-  reloadTime: 3
+  reloadTime: 1
   magSize: 6
   maxAmmo: 48
   bullet: {fileID: 71068146975388705, guid: 533694720601f4342923a18edbd9ce69, type: 3}
   firePoint: {fileID: 141276708819347722}
-  highNoonDamage: 50
+  fireSound: {fileID: 8300000, guid: 9aea6080ab5ed964892eeec54115a8c3, type: 3}
+  reloadSound: {fileID: 8300000, guid: 808e3368e8d35fe489d67c8d67eec330, type: 3}
+  highNoonDamage: 75
   highNoonCooldown: 10
   highNoonStartup: 2
   highNoonRequiredShot: 6
@@ -648,6 +650,7 @@ MonoBehaviour:
   highNoonRangeIndicator: {fileID: 5837605129920084570}
   highNoonText: {fileID: 2937634640905826326}
   highNoonMoveSpeed: 0.25
+  highNoonSound: {fileID: 8300000, guid: 94e0662117ffaef42945c393a72f4a02, type: 3}
 --- !u!95 &-4313900806241898171
 Animator:
   serializedVersion: 5

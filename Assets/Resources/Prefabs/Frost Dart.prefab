@@ -104,6 +104,8 @@ MonoBehaviour:
   maxAmmo: 40
   bullet: {fileID: 71068146975388705, guid: 3e69911e3dd989f4f8c7c782744d0444, type: 3}
   firePoint: {fileID: 4190565276834585009}
+  fireSound: {fileID: 8300000, guid: 5ffcbc2d2edf644499a0bbc095e0f464, type: 3}
+  reloadSound: {fileID: 0}
 --- !u!95 &-4035833157092182067
 Animator:
   serializedVersion: 5

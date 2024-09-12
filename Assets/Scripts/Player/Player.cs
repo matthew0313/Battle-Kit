@@ -9,6 +9,7 @@ using System.IO;
 [RequireComponent(typeof(PhotonView))]
 public class Player : MonoBehaviourPunCallbacks
 {
+    public int id { get { return photonView.ViewID; } }
     [Header("Components")]
     [SerializeField] GameObject model;
     [SerializeField] BoxCollider2D hitbox;
@@ -66,6 +67,11 @@ public class Player : MonoBehaviourPunCallbacks
     private void Awake()
     {
         hp = maxHp;
+        GameManager.Instance.players.Add(photonView.ViewID, this);
+    }
+    private void OnDestroy()
+    {
+        GameManager.Instance.players.Remove(photonView.ViewID);
     }
     public void RoundStart()
     {

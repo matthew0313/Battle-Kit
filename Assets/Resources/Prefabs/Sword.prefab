@@ -192,12 +192,15 @@ MonoBehaviour:
   damage: 25
   slashRate: 2
   detector: {fileID: 3421910695131859587}
+  slashSound: {fileID: 8300000, guid: 2b30588e7553a5b44ba523e7e5ccd09e, type: 3}
+  hitSound: {fileID: 8300000, guid: 5b80662952e0f5540851b72e8eeb6230, type: 3}
   flyingSlashDamage: 15
   flyingSlashFireRate: 5
   flyingSlashSpeed: 10
   flyingSlashRange: 10
   flyingSlash: {fileID: 2320054156913628218, guid: 431a7387f2321744bb9840417b6d1a59, type: 3}
   firePoint: {fileID: 9016754591354384439}
+  flyingSlashSound: {fileID: 8300000, guid: 265974755c7bf764baa5480d07009182, type: 3}
 --- !u!95 &-8263279530025973762
 Animator:
   serializedVersion: 5

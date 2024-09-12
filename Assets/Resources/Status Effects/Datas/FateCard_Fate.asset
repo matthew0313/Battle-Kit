@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4b0ca42711ce1b4fa834b598a3efaff, type: 3}
   m_Name: FateCard_Fate
   m_EditorClassIdentifier: 
-  effectName: "\uC18D\uC784\uC218 \uB371"
+  effectName: "\uD398\uC774\uD2B8"
   effect: {fileID: 7503388282340548043, guid: 3f45bc7f6d64b9d48bdc84635453e5ab, type: 3}
   duration: 3
   debuffColor: {r: 1, g: 0.7191008, b: 0.41037738, a: 1}
   maxStack: 4
   markDamage: 30
+  markDamageSound: {fileID: 8300000, guid: 2949b6d098846ad42958d6e98803e0a1, type: 3}

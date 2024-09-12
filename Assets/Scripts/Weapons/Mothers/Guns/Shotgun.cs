@@ -13,9 +13,7 @@ public abstract class Shotgun : Gun
     [SerializeField] protected float spread;
     protected override void Fire()
     {
-        if (mag <= 0) return;
-        mag--;
-        owner.ammoDescChange?.Invoke();
+        if (fireSound != null) GameManager.Instance.PlaySound(photonView, fireSound);
         anim.SetTrigger("Fire");
         for(int i = 0; i < shotCount; i++) FireBullet(firePoint.position, firePoint.rotation * Quaternion.Euler(0, 0, Random.Range(-spread, spread)));
     }

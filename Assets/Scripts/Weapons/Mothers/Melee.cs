@@ -3,9 +3,7 @@ using Photon.Pun.Demo.Asteroids;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using Unity.VisualScripting;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 public abstract class Melee : Weapon
 {
@@ -13,6 +11,7 @@ public abstract class Melee : Weapon
     [SerializeField] protected float damage;
     [SerializeField] protected float slashRate;
     [SerializeField] Detector detector;
+    [SerializeField] AudioClip slashSound, hitSound;
     float counter = 0.0f;
     private void Awake()
     {
@@ -30,12 +29,15 @@ public abstract class Melee : Weapon
     List<Player> hit = new();
     protected virtual void Slash()
     {
+        if(slashSound != null) GameManager.Instance.PlaySound(photonView, slashSound);
         hit.Clear();
         detector.Refresh();
         anim.SetTrigger("Slash");
     }
     protected virtual void Hit(Player player)
     {
+        if (player == this) return;
+        if (hitSound != null) GameManager.Instance.PlaySound(photonView, hitSound);
         float scaledDamage = owner.GetDamageValue(damage);
         GameManager.Instance.UIs.DamageText(scaledDamage, player.transform.position);
         player.photonView.RPC("GetDamage", player.photonView.Owner, scaledDamage);

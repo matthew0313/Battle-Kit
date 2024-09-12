@@ -296,6 +296,7 @@ MonoBehaviour:
   model: {fileID: 4422418489787685747}
   anim: {fileID: 0}
   m_drone: {fileID: 140197471301709617}
+  deploySound: {fileID: 8300000, guid: aef67111f3609fa418a26151b7b97a23, type: 3}
   moveSpeed: 20
   fireRate: 0.35
   bulletDamage: 7
@@ -313,6 +314,7 @@ MonoBehaviour:
   firePoints:
   - {fileID: 7614079096206024936}
   - {fileID: 6077509145519268785}
+  fireSound: {fileID: 8300000, guid: 7f321aa3546139b4ba9df947f3b7d428, type: 3}
 --- !u!1 &8273039558961939098
 GameObject:
   m_ObjectHideFlags: 0

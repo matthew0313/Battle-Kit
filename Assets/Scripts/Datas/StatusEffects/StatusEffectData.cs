@@ -99,7 +99,7 @@ public abstract class StatusEffect
             effect = PhotonNetwork.Instantiate(Path.Combine("Status Effects", "Effects", data.effect.gameObject.name), affected.transform.position, Quaternion.identity).GetComponent<StatusEffectEffect>();
             effect.transform.SetParent(affected.transform);
         }
-        effectText = PhotonNetwork.Instantiate("StatusEffectText", affected.effectTextAnchor.position, Quaternion.identity).GetComponent<StatusEffectText>();
+        effectText = PhotonNetwork.Instantiate(Path.Combine("Effects", "StatusEffectText"), affected.effectTextAnchor.position, Quaternion.identity).GetComponent<StatusEffectText>();
         affected.photonView.RPC("AddStatusEffectText", RpcTarget.All, effectText.photonView.ViewID, EffectText(), data.debuffColor.ToVector());
         affected.onDeath += EndEffect;
     }

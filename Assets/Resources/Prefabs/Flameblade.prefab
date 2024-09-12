@@ -126,8 +126,10 @@ MonoBehaviour:
   model: {fileID: 8273039558961939098}
   anim: {fileID: -6877082811505001360}
   damage: 20
-  slashRate: 3
+  slashRate: 2
   detector: {fileID: 5800223447377615987}
+  slashSound: {fileID: 8300000, guid: 2b30588e7553a5b44ba523e7e5ccd09e, type: 3}
+  hitSound: {fileID: 8300000, guid: 894408048e840b44e97cfd3c2ae8a6af, type: 3}
 --- !u!95 &-6877082811505001360
 Animator:
   serializedVersion: 5

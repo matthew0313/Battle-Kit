@@ -17,17 +17,51 @@ public class GameManager : MonoBehaviourPunCallbacks
     }
     public GameManager_UIs UIs { get; private set; }
     public Player myPlayer { get; private set; }
+    public Dictionary<int, Player> players { get; } = new();
     public bool roundInProgress { get; private set; } = false;
 
     [SerializeField] float coinSpawnRate = 2.0f;
     [SerializeField] float roundStartTime = 5.0f;
     [SerializeField] float mapSize = 20.0f;
+
+    Dictionary<string, AudioClip> clips = new();
+    List<(GameObject, AudioSource)> sources = new();
     private void Awake()
     {
         UIs = GetComponent<GameManager_UIs>();
         myPlayer = PhotonNetwork.Instantiate(Path.Combine("Prefabs", "Player"), Vector2.zero, Quaternion.identity).GetComponent<Player>();
         myPlayer.gameObject.SetActive(false);
         UIs.OnAwake();
+        foreach(var i in Resources.LoadAll<AudioClip>("Audio"))
+        {
+            clips.Add(i.name, i);
+        }
+    }
+    [PunRPC] public void PlaySoundAll(int objectID, string clipName)
+    {
+        if (!clips.ContainsKey(clipName)) return;
+        PhotonView target = PhotonView.Find(objectID);
+        if (target == null) return;
+        foreach(var i in sources)
+        {
+            if (!i.Item2.isPlaying)
+            {
+                i.Item1.transform.position = target.transform.position;
+                i.Item2.clip = clips[clipName];
+                i.Item2.Play();
+                return;
+            }
+        }
+        AudioSource tmp = new GameObject("AudioSource").AddComponent<AudioSource>();
+        tmp.transform.position = target.transform.position;
+        tmp.clip = clips[clipName];
+        tmp.playOnAwake = false;
+        tmp.Play();
+        sources.Add((tmp.gameObject, tmp));
+    }
+    public void PlaySound(PhotonView target, AudioClip clip)
+    {
+        photonView.RPC("PlaySoundAll", RpcTarget.All, target.ViewID, clip.name);
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
@@ -88,6 +122,7 @@ public class GameManager : MonoBehaviourPunCallbacks
         roundInProgress = false;
         myPlayer.gameObject.SetActive(false);
         counter = 0.0f;
+        foreach (var i in sources) i.Item2.Stop();
         onRoundEnd?.Invoke();
     }
     public bool winner { get; private set; } = false;

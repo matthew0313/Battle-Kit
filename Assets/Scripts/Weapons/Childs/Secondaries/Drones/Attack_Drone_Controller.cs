@@ -16,6 +16,7 @@ public class Attack_Drone_Controller : Drone_Controller
     [SerializeField] internal bool automaticFire = true;
     [SerializeField] internal Bullet bullet;
     [SerializeField] internal Transform[] firePoints;
+    [SerializeField] internal AudioClip fireSound;
     TopLayer<Attack_Drone_Controller> topLayer;
 
     internal List<Player> targets = new();
@@ -103,6 +104,7 @@ class Automatic : State<Attack_Drone_Controller>
             origin.drone.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(targetPos.y - origin.drone.position.y, targetPos.x - origin.drone.position.x) * Mathf.Rad2Deg);
             if(origin.ammo > 0)
             {
+                if(origin.fireSound != null) GameManager.Instance.PlaySound(origin.photonView, origin.fireSound);
                 origin.ammo--;
                 foreach (var i in origin.firePoints)
                 {
@@ -204,6 +206,7 @@ class Manual_Attacking : State<Attack_Drone_Controller>
                 origin.drone.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(targetPos.y - origin.drone.position.y, targetPos.x - origin.drone.position.x) * Mathf.Rad2Deg);
                 if (origin.ammo > 0)
                 {
+                    if(origin.fireSound != null) GameManager.Instance.PlaySound(origin.photonView, origin.fireSound);
                     origin.ammo--;
                     foreach (var i in origin.firePoints)
                     {

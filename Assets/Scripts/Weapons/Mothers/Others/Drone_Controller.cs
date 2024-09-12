@@ -9,9 +9,11 @@ using UnityEngine;
 public abstract class Drone_Controller : Weapon
 {
     [SerializeField] Transform m_drone;
+    [SerializeField] AudioClip deploySound;
     public Transform drone { get { return m_drone; } }
     private void Awake()
     {
+        if(deploySound != null) GameManager.Instance.PlaySound(photonView, deploySound);
         drone.SetParent(null);
     }
     [PunRPC] public void SetDroneActive(bool active)
@@ -20,6 +22,6 @@ public abstract class Drone_Controller : Weapon
     }
     private void OnDestroy()
     {
-        Destroy(m_drone.gameObject);
+        Destroy(drone.gameObject);
     }
 }

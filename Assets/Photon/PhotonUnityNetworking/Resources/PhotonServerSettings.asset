@@ -79,6 +79,8 @@ MonoBehaviour:
   - Set
   - SetText
   - AddStatusEffectText
+  - PlaySound
+  - PlaySoundAll
   DisableAutoOpenWizard: 1
   ShowSettings: 0
   DevRegionSetOnce: 1
