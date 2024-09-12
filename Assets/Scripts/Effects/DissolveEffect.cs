@@ -16,15 +16,16 @@ public class DissolveEffect : MonoBehaviourPun
     }
     private void Update()
     {
-        if (!photonView.IsMine) return;
         if (counter < duration)
         {
-            photonView.RPC("Dissolve", RpcTarget.All, (duration - counter) / duration);
             counter += Time.deltaTime;
+            Dissolve(1.0f - counter / duration);
         }
-        else PhotonNetwork.Destroy(gameObject);
+        else
+        {
+            if(photonView.IsMine) PhotonNetwork.Destroy(gameObject);
+        }
     }
-    [PunRPC]
     public void Dissolve(float newAlpha)
     {
         color.a = newAlpha;

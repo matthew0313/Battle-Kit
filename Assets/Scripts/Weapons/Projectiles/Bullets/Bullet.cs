@@ -10,9 +10,9 @@ public class Bullet : Projectile
     [SerializeField] bool reflectable = true;
     [SerializeField] bool pierce = false;
     protected float speed, range;
-    public void Set(float damage, float speed, float range, Action<HitInfo> onHit, string inflictingEffect)
+    public void Set(float damage, float speed, float range)
     {
-        base.Set(damage, onHit, inflictingEffect);
+        base.Set(damage);
         this.speed = speed;
         this.range = range;
     }

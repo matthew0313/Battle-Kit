@@ -124,11 +124,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2244233846097508697}
-  - component: {fileID: 7190413342084752515}
-  - component: {fileID: 8687903551200604734}
   - component: {fileID: 5668526116943403667}
   - component: {fileID: 7393786652993794449}
   - component: {fileID: 1966008914193643627}
+  - component: {fileID: 5013184806593574101}
+  - component: {fileID: 8845926324298595502}
   m_Layer: 0
   m_Name: Glock
   m_TagString: Untagged
@@ -153,48 +153,6 @@ Transform:
   - {fileID: 141276708819347722}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7190413342084752515
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7479600549515458900}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowLayerWeightsInspector: 1
-  ShowParameterInspector: 1
-  m_SynchronizeParameters:
-  - Type: 9
-    SynchronizeType: 1
-    Name: Fire
-  m_SynchronizeLayers:
-  - SynchronizeType: 0
-    LayerIndex: 0
---- !u!95 &8687903551200604734
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7479600549515458900}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: db66ce1de8a050a4c8f03c6774817183, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &5668526116943403667
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -214,8 +172,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 7190413342084752515}
   - {fileID: 7393786652993794449}
+  - {fileID: 8845926324298595502}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -250,7 +208,7 @@ MonoBehaviour:
   m_weaponName: "\uAE00\uB85D"
   m_weaponImage: {fileID: 21300000, guid: e23937471deef0e4da7ccb928d9b69f1, type: 3}
   model: {fileID: 5071271601722906378}
-  anim: {fileID: 8687903551200604734}
+  anim: {fileID: 5013184806593574101}
   auto: 0
   damage: 12
   fireRate: 0.2
@@ -261,3 +219,45 @@ MonoBehaviour:
   maxAmmo: 96
   bullet: {fileID: 71068146975388705, guid: 533694720601f4342923a18edbd9ce69, type: 3}
   firePoint: {fileID: 141276708819347722}
+--- !u!95 &5013184806593574101
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7479600549515458900}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f9fddb9b8d79ea246865f276fc09f571, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8845926324298595502
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7479600549515458900}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 9
+    SynchronizeType: 1
+    Name: Fire
+  m_SynchronizeLayers:
+  - SynchronizeType: 0
+    LayerIndex: 0

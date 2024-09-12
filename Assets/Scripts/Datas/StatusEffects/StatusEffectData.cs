@@ -8,8 +8,11 @@ using UnityEngine;
 
 public abstract class StatusEffectData : ScriptableObject
 {
+    [SerializeField] internal string effectName;
     [SerializeField] internal StatusEffectEffect effect;
     [SerializeField] internal float duration;
+    [SerializeField] internal Color debuffColor;
+    [SerializeField] internal int maxStack = 1;
     public void AddEffectToPlayer(Player affected)
     {
         GetEffect().AddToPlayer(affected);
@@ -49,7 +52,9 @@ public abstract class StatusEffect
     public readonly StatusEffectData data;
     protected Player affected { get; private set; }
     protected float durationLeft;
-    GameObject effect = null;
+    protected StatusEffectEffect effect = null;
+    protected StatusEffectText effectText;
+    protected int stack = 1;
     public StatusEffect(StatusEffectData origin)
     {
         data = origin;
@@ -57,25 +62,45 @@ public abstract class StatusEffect
     }
     public virtual void AddToPlayer(Player affected)
     {
-        if (affected.FindStatusEffect(data, out StatusEffect found)) found.ReApply();
+        if (affected.FindStatusEffect(data, out StatusEffect found))
+        {
+            found.ReApply();
+        }
         else
         {
             this.affected = affected;
             affected.statusEffects.Add(this);
+            OnEffectAdd();
         }
-        OnEffectAdd();
+    }
+    protected void RefreshEffectText() => effectText.photonView.RPC("SetText", RpcTarget.All, EffectText());
+    protected virtual string EffectText()
+    {
+        return data.effectName + (stack > 1 ? $"(x{stack})" : "");
     }
     public virtual void ReApply()
     {
         durationLeft = data.duration;
+        if(stack < data.maxStack)
+        {
+            stack++;
+            OnStackAdd();
+        }
+    }
+    protected virtual void OnStackAdd()
+    {
+        effect.Level(stack);
+        RefreshEffectText();
     }
     public virtual void OnEffectAdd()
     {
         if(data.effect != null)
         {
-            effect = PhotonNetwork.Instantiate(Path.Combine("Status Effects", "Effects", data.effect.gameObject.name), affected.transform.position, Quaternion.identity);
+            effect = PhotonNetwork.Instantiate(Path.Combine("Status Effects", "Effects", data.effect.gameObject.name), affected.transform.position, Quaternion.identity).GetComponent<StatusEffectEffect>();
             effect.transform.SetParent(affected.transform);
         }
+        effectText = PhotonNetwork.Instantiate("StatusEffectText", affected.effectTextAnchor.position, Quaternion.identity).GetComponent<StatusEffectText>();
+        affected.photonView.RPC("AddStatusEffectText", RpcTarget.All, effectText.photonView.ViewID, EffectText(), data.debuffColor.ToVector());
         affected.onDeath += EndEffect;
     }
     public virtual void OnEffectUpdate()
@@ -83,8 +108,12 @@ public abstract class StatusEffect
         durationLeft -= Time.deltaTime;
         if(durationLeft <= 0)
         {
-            EndEffect();
+            OnDurationEnd();
         }
+    }
+    protected virtual void OnDurationEnd()
+    {
+        EndEffect();
     }
     bool ended = false;
     public void EndEffect()
@@ -97,6 +126,10 @@ public abstract class StatusEffect
     }
     public virtual void OnEffectEnd()
     {
-        if(effect != null) PhotonNetwork.Destroy(effect);
+        if (effect != null)
+        {
+            PhotonNetwork.Destroy(effect.gameObject);
+        }
+        PhotonNetwork.Destroy(effectText.gameObject);
     }
 }

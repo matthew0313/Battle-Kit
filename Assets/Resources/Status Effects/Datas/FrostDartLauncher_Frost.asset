@@ -12,7 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba0d9facede68294e8f33d6b14f6aa10, type: 3}
   m_Name: FrostDartLauncher_Frost
   m_EditorClassIdentifier: 
+  effectName: "\uC5BC\uC74C"
   effect: {fileID: -8855272547528596386, guid: a0ec645beda81be4190303dbe7165ad9, type: 3}
   duration: 5
-  slowing: 0.75
+  debuffColor: {r: 0, g: 0.5913391, b: 1, a: 1}
   maxStack: 3
+  slowing: 0.75

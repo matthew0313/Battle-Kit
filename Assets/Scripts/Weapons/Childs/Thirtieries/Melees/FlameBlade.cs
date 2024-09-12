@@ -7,9 +7,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 public class FlameBlade : Melee
 {
-    protected override void Slash()
+    protected override void Hit(Player player)
     {
-        if (anim != null) anim.SetTrigger("Slash");
-        PhotonNetwork.Instantiate(Path.Combine("Prefabs", slash.gameObject.name), slashPoint.position, slashPoint.rotation).GetComponent<Slash>().Set(damage, slashLifetime, null, "FlameBlade_Burning");
+        base.Hit(player);
+        player.photonView.RPC("AddStatusEffect", player.photonView.Owner, "FlameBlade_Burning");
     }
 }

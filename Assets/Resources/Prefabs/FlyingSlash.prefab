@@ -245,6 +245,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c730d38857c3944fa446695ec25eb63, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  photonView: {fileID: 4315132209712245322}
+  direction: {fileID: 3978177936289581295}
 --- !u!114 &2320054156913628218
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -257,5 +259,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d8737c541ce9a243949802418ccc9b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inflictingEffect: 
   reflectable: 0
   pierce: 1

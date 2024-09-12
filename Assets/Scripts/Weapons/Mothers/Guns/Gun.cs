@@ -33,7 +33,7 @@ public abstract class Gun : Weapon
         else if(!reloading && counter >= fireRate && (auto ? Input.GetMouseButton(0) : Input.GetMouseButtonDown(0)))
         {
             counter -= fireRate;
-            Fire();
+            AttemptFire();
         }
     }
     protected virtual void Reload()
@@ -55,18 +55,23 @@ public abstract class Gun : Weapon
         reloading = false;
         owner.ammoDescChange?.Invoke();
     }
-    protected virtual void Fire()
+    protected virtual void AttemptFire()
     {
         if (mag <= 0) return;
         mag--;
         owner.ammoDescChange?.Invoke();
-        if (anim != null) anim.SetTrigger("Fire");
+        Fire();
+    }
+    protected virtual void Fire()
+    {
+        anim.SetTrigger("Fire");
         FireBullet(firePoint.position, firePoint.rotation);
     }
-    protected virtual void FireBullet(Vector2 position, Quaternion rotation)
+    protected virtual Bullet FireBullet(Vector2 position, Quaternion rotation)
     {
         Bullet tmp = PhotonNetwork.Instantiate(Path.Combine("Prefabs", bullet.gameObject.name), position, rotation).GetComponent<Bullet>();
-        tmp.Set(damage, bulletSpeed, bulletRange, null, null);
+        tmp.Set(damage, bulletSpeed, bulletRange);
+        return tmp;
     }
     protected override void Update()
     {

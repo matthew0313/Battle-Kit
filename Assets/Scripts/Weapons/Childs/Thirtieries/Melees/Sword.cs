@@ -28,8 +28,8 @@ public class Sword : Melee
             if (Input.GetKeyDown(KeyCode.E))
             {
                 flyingSlashCounter -= flyingSlashFireRate;
-                anim.SetTrigger("Slash");
-                PhotonNetwork.Instantiate(Path.Combine("Prefabs", flyingSlash.gameObject.name), firePoint.position, firePoint.rotation).GetComponent<Bullet>().Set(flyingSlashDamage, flyingSlashSpeed, flyingSlashRange, null, null);
+                anim.SetTrigger("FlyingSlash");
+                PhotonNetwork.Instantiate(Path.Combine("Prefabs", flyingSlash.gameObject.name), firePoint.position, firePoint.rotation).GetComponent<Bullet>().Set(flyingSlashDamage, flyingSlashSpeed, flyingSlashRange);
             }
         }
     }

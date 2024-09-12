@@ -5,6 +5,7 @@ using UnityEngine.UI;
 using Photon.Pun;
 using System.IO;
 using System;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(GameManager_UIs), typeof(PhotonView))]
 public class GameManager : MonoBehaviourPunCallbacks
@@ -94,5 +95,17 @@ public class GameManager : MonoBehaviourPunCallbacks
     {
         winner = true;
         photonView.RPC("EndRound", RpcTarget.All);
+    }
+    public void ReturnToLobby()
+    {
+        PhotonNetwork.LeaveRoom();
+    }
+    public override void OnLeftRoom()
+    {
+        SceneManager.LoadScene("Lobby");
+    }
+    public void QuitGame()
+    {
+        Application.Quit();
     }
 }

@@ -14,12 +14,12 @@ public class Explosion : Projectile
     {
         color = rend.color;
     }
-    public void Set(float damage, float lifeTime, float knockback, float size, Action<HitInfo> onHit, string inflictingEffect)
+    protected override bool ignoreOwner => true;
+    public void Set(float damage, float lifeTime, float knockback, float size)
     {
-        base.Set(damage, onHit, inflictingEffect);
+        base.Set(damage);
         this.lifeTime = lifeTime;
         this.knockback = knockback;
-        this.onHit = onHit;
         transform.localScale = new Vector2(size * 2, size * 2);
     }
     private void Update()

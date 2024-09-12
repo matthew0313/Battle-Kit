@@ -106,7 +106,7 @@ class Automatic : State<Attack_Drone_Controller>
                 origin.ammo--;
                 foreach (var i in origin.firePoints)
                 {
-                    PhotonNetwork.Instantiate(Path.Combine("Prefabs", origin.bullet.gameObject.name), i.position, i.rotation).GetComponent<Bullet>().Set(origin.autoBulletDamage, origin.autoBulletSpeed, origin.autoBulletRange, null, null);
+                    PhotonNetwork.Instantiate(Path.Combine("Prefabs", origin.bullet.gameObject.name), i.position, i.rotation).GetComponent<Bullet>().Set(origin.autoBulletDamage, origin.autoBulletSpeed, origin.autoBulletRange);
                 }
                 origin.owner.ammoDescChange?.Invoke();
             }
@@ -207,7 +207,7 @@ class Manual_Attacking : State<Attack_Drone_Controller>
                     origin.ammo--;
                     foreach (var i in origin.firePoints)
                     {
-                        PhotonNetwork.Instantiate(Path.Combine("Prefabs", origin.bullet.gameObject.name), i.position, i.rotation).GetComponent<Bullet>().Set(origin.bulletDamage, origin.bulletSpeed, origin.bulletRange, null, null);
+                        PhotonNetwork.Instantiate(Path.Combine("Prefabs", origin.bullet.gameObject.name), i.position, i.rotation).GetComponent<Bullet>().Set(origin.bulletDamage, origin.bulletSpeed, origin.bulletRange);
                     }
                     origin.owner.ammoDescChange?.Invoke();
                 }

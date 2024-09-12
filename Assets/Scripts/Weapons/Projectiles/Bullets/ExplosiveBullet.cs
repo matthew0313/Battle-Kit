@@ -17,7 +17,9 @@ public class ExplosiveBullet : Bullet
     protected override void Despawn()
     {
         Explosion tmp = PhotonNetwork.Instantiate(Path.Combine("Prefabs", explosion.gameObject.name), transform.position, Quaternion.identity).GetComponent<Explosion>();
-        tmp.Set(damage, explosionLifeTime, explosionKnockback, explosionSize, onHit, inflictingEffect);
+        tmp.Set(damage, explosionLifeTime, explosionKnockback, explosionSize);
+        tmp.onHit = onHit;
+        tmp.inflictingEffect = inflictingEffect;
         base.Despawn();
     }
 }

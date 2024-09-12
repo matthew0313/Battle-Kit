@@ -5,15 +5,19 @@ using System.Collections.Generic;
 using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public abstract class Melee : Weapon
 {
     [Header("Melee")]
     [SerializeField] protected float damage;
-    [SerializeField] protected float slashRate, slashLifetime;
-    [SerializeField] protected Slash slash;
-    [SerializeField] protected Transform slashPoint;
+    [SerializeField] protected float slashRate;
+    [SerializeField] Detector detector;
     float counter = 0.0f;
+    private void Awake()
+    {
+        detector.onOneTimeDetect += Hit;
+    }
     public override void OnWeaponUpdate()
     {
         base.OnWeaponUpdate();
@@ -23,10 +27,18 @@ public abstract class Melee : Weapon
             Slash();
         }
     }
+    List<Player> hit = new();
     protected virtual void Slash()
     {
+        hit.Clear();
+        detector.Refresh();
         anim.SetTrigger("Slash");
-        PhotonNetwork.Instantiate(Path.Combine("Prefabs", slash.gameObject.name), slashPoint.position, slashPoint.rotation).GetComponent<Slash>().Set(damage, slashLifetime, null, null);
+    }
+    protected virtual void Hit(Player player)
+    {
+        float scaledDamage = owner.GetDamageValue(damage);
+        GameManager.Instance.UIs.DamageText(scaledDamage, player.transform.position);
+        player.photonView.RPC("GetDamage", player.photonView.Owner, scaledDamage);
     }
     protected override void Update()
     {

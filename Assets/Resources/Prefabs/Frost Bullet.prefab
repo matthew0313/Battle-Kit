@@ -362,5 +362,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0d8737c541ce9a243949802418ccc9b8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  inflictingEffect: 
   reflectable: 1
   pierce: 0

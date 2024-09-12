@@ -5,6 +5,7 @@ using System.IO;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class Revolver : Gun
 {
@@ -15,6 +16,7 @@ public class Revolver : Gun
     [SerializeField] Detector highNoonRange;
     [SerializeField] GameObject highNoonRangeIndicator;
     [SerializeField] Text highNoonText;
+    [SerializeField] float highNoonMoveSpeed = 0.25f;
     float highNoonCounter = 0.0f;
     int hitCount = 0;
     private void Awake()
@@ -28,10 +30,11 @@ public class Revolver : Gun
         highNoonText.canvas.transform.SetParent(owner.transform, false);
         skillList.Add(new SkillEventPair(HighNoonBarScale, HighNoonSkillDesc));
     }
-    protected override void FireBullet(Vector2 position, Quaternion rotation)
+    protected override Bullet FireBullet(Vector2 position, Quaternion rotation)
     {
-        Bullet tmp = PhotonNetwork.Instantiate(Path.Combine("Prefabs", bullet.gameObject.name), position, rotation).GetComponent<Bullet>();
-        tmp.Set(damage, bulletSpeed, bulletRange, OnBulletHit, null);
+        Bullet tmp = base.FireBullet(position, rotation);
+        tmp.onHit += OnBulletHit;
+        return tmp;
     }
     IEnumerator highNoon = null;
     public override void OnWeaponUpdate()
@@ -61,7 +64,7 @@ public class Revolver : Gun
         owner.canAttack = false;
         owner.canDash = false;
         owner.canSwapWeapon = false;
-        owner.MultiplyMoveSpeed(0.25f);
+        owner.moveSpeedMultiplier *= highNoonMoveSpeed;
         photonView.RPC("SetIndicatorActive", RpcTarget.All, true);
         photonView.RPC("HighNoonText", RpcTarget.All);
         yield return new WaitForSeconds(highNoonStartup);
@@ -75,13 +78,15 @@ public class Revolver : Gun
             Debug.Log(ammo);
             owner.ammoDescChange?.Invoke();
             anim.SetTrigger("Fire");
-            i.photonView.RPC("GetDamage", i.photonView.Owner, owner.GetDamageValue(highNoonDamage));
+            float scaledDamage = owner.GetDamageValue(highNoonDamage);
+            i.photonView.RPC("GetDamage", i.photonView.Owner, scaledDamage);
+            GameManager.Instance.UIs.DamageText(scaledDamage, i.transform.position);
             yield return interval;
         }
         owner.canAttack = true;
         owner.canDash = true;
         owner.canSwapWeapon = true;
-        owner.DivideMoveSpeed(0.25f);
+        owner.moveSpeedMultiplier /= highNoonMoveSpeed;
         highNoon = null;
     }
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)

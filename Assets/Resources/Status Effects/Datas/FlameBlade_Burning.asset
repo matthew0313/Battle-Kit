@@ -9,12 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cdc0bc5f6449c314e9e09670fa566aa1, type: 3}
+  m_Script: {fileID: 11500000, guid: dbd8a29618ccbdd478ca692a0ad865a8, type: 3}
   m_Name: FlameBlade_Burning
   m_EditorClassIdentifier: 
+  effectName: "\uD654\uC0C1"
   effect: {fileID: -8855272547528596386, guid: 19691121a24b19b48825ae943b7c07a7, type: 3}
-  duration: 5
+  duration: 5.1
+  debuffColor: {r: 1, g: 0.40481335, b: 0, a: 1}
+  maxStack: 1
   tickDamage: 5
   tickRate: 1
-  maxStack: 1
-  damageColor: {r: 1, g: 0.39090377, b: 0, a: 1}

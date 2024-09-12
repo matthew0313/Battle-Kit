@@ -14,26 +14,24 @@ public class Slash : Projectile
     {
         color = rend.color;
     }
-    public void Set(float damage, float lifeTime, Action<HitInfo> onHit, string inflictingEffect)
+    public void Set(float damage, float lifeTime)
     {
-        base.Set(damage, onHit, inflictingEffect);
+        base.Set(damage);
         this.lifeTime = lifeTime;
     }
     float counter = 0.0f;
     private void Update()
     {
-        if (!photonView.IsMine) return;
         if(counter < lifeTime)
         {
-            photonView.RPC("Dissolve", RpcTarget.All, 1.0f - counter / lifeTime);
             counter += Time.deltaTime;
+            Dissolve(1.0f - counter / lifeTime);
         }
         else
         {
-            Despawn();
+            if (photonView.IsMine) Despawn();
         }
     }
-    [PunRPC]
     public void Dissolve(float newAlpha)
     {
         color.a = newAlpha;

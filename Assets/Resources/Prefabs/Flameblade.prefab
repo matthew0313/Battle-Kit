@@ -32,37 +32,6 @@ Transform:
   - {fileID: 2527806177949922626}
   m_Father: {fileID: 763183716147297889}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &6237349887982468428
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 9016754591354384439}
-  m_Layer: 0
-  m_Name: SlashPoint
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &9016754591354384439
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6237349887982468428}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 1, w: 0}
-  m_LocalPosition: {x: -1.5, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 763183716147297889}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 180}
 --- !u!1 &7204484088057450080
 GameObject:
   m_ObjectHideFlags: 0
@@ -72,11 +41,11 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 763183716147297889}
-  - component: {fileID: 5565707535336025452}
-  - component: {fileID: 5322401807016062068}
   - component: {fileID: 4043792316360468096}
   - component: {fileID: 7565167678767400466}
   - component: {fileID: 3856008135577222783}
+  - component: {fileID: -6877082811505001360}
+  - component: {fileID: 8956996496336452742}
   m_Layer: 0
   m_Name: Flameblade
   m_TagString: Untagged
@@ -98,51 +67,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4408125406947478842}
-  - {fileID: 9016754591354384439}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5565707535336025452
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7204484088057450080}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShowLayerWeightsInspector: 1
-  ShowParameterInspector: 1
-  m_SynchronizeParameters:
-  - Type: 9
-    SynchronizeType: 1
-    Name: Slash
-  m_SynchronizeLayers:
-  - SynchronizeType: 0
-    LayerIndex: 0
---- !u!95 &5322401807016062068
-Animator:
-  serializedVersion: 5
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7204484088057450080}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8ce4d2d103954f04ea4290905987c1a1, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &4043792316360468096
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -162,8 +88,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
-  - {fileID: 5565707535336025452}
   - {fileID: 7565167678767400466}
+  - {fileID: 8956996496336452742}
   sceneViewId: 0
   InstantiationId: 0
   isRuntimeInstantiated: 0
@@ -198,12 +124,52 @@ MonoBehaviour:
   m_weaponName: "\uD654\uC5FC\uAC80"
   m_weaponImage: {fileID: 21300000, guid: f36c5d3f25f67e748a9335e94f3a66b3, type: 3}
   model: {fileID: 8273039558961939098}
-  anim: {fileID: 5322401807016062068}
+  anim: {fileID: -6877082811505001360}
   damage: 20
   slashRate: 3
-  slashLifetime: 0.8
-  slash: {fileID: 350648137937299614, guid: ac7f8c83c3265c147885f5338c0c8f31, type: 3}
-  slashPoint: {fileID: 9016754591354384439}
+  detector: {fileID: 5800223447377615987}
+--- !u!95 &-6877082811505001360
+Animator:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7204484088057450080}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 136278208dd4d2a4eb1fa3d7a7089baa, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &8956996496336452742
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7204484088057450080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8c4a61274f60b4ea5fb4299cfdbf14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ShowLayerWeightsInspector: 1
+  ShowParameterInspector: 1
+  m_SynchronizeParameters:
+  - Type: 9
+    SynchronizeType: 1
+    Name: Slash
+  m_SynchronizeLayers:
+  - SynchronizeType: 0
+    LayerIndex: 0
 --- !u!1 &7312414569518813911
 GameObject:
   m_ObjectHideFlags: 0
@@ -360,7 +326,8 @@ GameObject:
   - component: {fileID: 2527806177949922626}
   - component: {fileID: 5836435829645952775}
   - component: {fileID: 7126327101975174679}
-  m_Layer: 0
+  - component: {fileID: 5800223447377615987}
+  m_Layer: 8
   m_Name: Model
   m_TagString: Melee
   m_Icon: {fileID: 0}
@@ -467,7 +434,7 @@ BoxCollider2D:
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: -0.2, y: 0.2}
+  m_Offset: {x: 0, y: 0.2}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.5}
@@ -480,3 +447,15 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.5, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &5800223447377615987
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8273039558961939098}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5d806f3fbce5f474f9597155eb9af33c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

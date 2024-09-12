@@ -13,9 +13,9 @@ public class DamageText : MonoBehaviourPun
     float counter = 0.0f;
     Color color;
     Vector2 moveDir;
-    public void Set(string content, Color color, Vector2 dir)
+    public void Set(string content, Vector3 color, Vector2 dir)
     {
-        photonView.RPC("SetDefaults",RpcTarget.All, content, new Vector3(color.r, color.g, color.b));
+        photonView.RPC("SetDefaults",RpcTarget.All, content, color);
         moveDir = dir;
     }
     private void Update()
@@ -39,7 +39,7 @@ public class DamageText : MonoBehaviourPun
     public void SetDefaults(string text, Vector3 color)
     {
         this.text.text = text;
-        this.color = new Color(color.x, color.y, color.z);
+        this.color = color.ToColor();
         this.text.color = this.color;
     }
 }

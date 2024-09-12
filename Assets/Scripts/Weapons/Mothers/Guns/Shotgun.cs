@@ -16,7 +16,7 @@ public abstract class Shotgun : Gun
         if (mag <= 0) return;
         mag--;
         owner.ammoDescChange?.Invoke();
-        if (anim != null) anim.SetTrigger("Fire");
+        anim.SetTrigger("Fire");
         for(int i = 0; i < shotCount; i++) FireBullet(firePoint.position, firePoint.rotation * Quaternion.Euler(0, 0, Random.Range(-spread, spread)));
     }
 }

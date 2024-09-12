@@ -14,6 +14,7 @@ public class GameManager_UIs : MonoBehaviourPunCallbacks
     [SerializeField] DamageText damageText;
     [SerializeField] Transform skillUIParent;
     [SerializeField] SkillUIElement skillUIElement;
+    [SerializeField] GameObject pauseMenu;
     [SerializeField]
     Image[] weaponImages = new Image[3];
     [SerializeField]
@@ -43,6 +44,7 @@ public class GameManager_UIs : MonoBehaviourPunCallbacks
     {
         WeaponBar();
         SkillBar();
+        PauseMenu();
     }
     void AmmoDesc()
     {
@@ -93,6 +95,14 @@ public class GameManager_UIs : MonoBehaviourPunCallbacks
             skillUIs[i].skillBar.localScale = new Vector2(Mathf.Clamp(origin.myPlayer.skillList[i].skillBarFill.Invoke(), 0.0f, 1.0f), 1.0f);
         }
     }
+    void PauseMenu()
+    {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            pauseMenu.SetActive(!pauseMenu.activeSelf);
+        }
+    }
+    public void Unpause() => pauseMenu.SetActive(false);
     void LoadoutChange()
     {
         for(int i = 0; i < 3; i++)
@@ -106,18 +116,18 @@ public class GameManager_UIs : MonoBehaviourPunCallbacks
         DamageText tmp = PhotonNetwork.Instantiate(Path.Combine("Effects", damageText.gameObject.name), position, Quaternion.identity).GetComponent<DamageText>();
         if (damage >= 40.0f)
         {
-            tmp.Set(damage.ToString() + "!!", new Color(1, 0, 0), new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized);
+            tmp.Set(damage.ToString() + "!!", new Vector3(1, 0, 0), new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized);
         }
         else if(damage >= 20.0f)
         {
-            tmp.Set(damage.ToString() + "!", new Color(1, 0.5f, 0), new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized);
+            tmp.Set(damage.ToString() + "!", new Vector3(1, 0.5f, 0), new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized);
         }
         else
         {
-            tmp.Set(damage.ToString(), new Color(1, 1, 0), new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized);
+            tmp.Set(damage.ToString(), new Vector3(1, 1, 0), new Vector2(Random.Range(-1.0f, 1.0f), Random.Range(-1.0f, 1.0f)).normalized);
         }
     }
-    public void DamageText(float damage, Vector2 position, Color color)
+    public void DamageText(float damage, Vector2 position, Vector3 color)
     {
         DamageText tmp = PhotonNetwork.Instantiate(Path.Combine("Effects", damageText.gameObject.name), position, Quaternion.identity).GetComponent<DamageText>();
         if (damage >= 40.0f)

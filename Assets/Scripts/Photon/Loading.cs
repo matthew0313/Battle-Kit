@@ -6,9 +6,13 @@ using UnityEngine.SceneManagement;
 
 public class Loading : MonoBehaviourPunCallbacks
 {
+    private void Awake()
+    {
+        Application.targetFrameRate = 60;
+        Screen.fullScreen = false;
+    }
     private void Start()
     {
-        Screen.fullScreen = false;
         PhotonNetwork.ConnectUsingSettings();
     }
     public override void OnConnectedToMaster()

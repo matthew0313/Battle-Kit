@@ -40,6 +40,8 @@ public class Player : MonoBehaviourPunCallbacks
     [SerializeField] Transform hpScaler;
     [SerializeField] Transform dashCooldownScaler;
     [SerializeField] Text coinText;
+    [SerializeField] Transform m_effectTextAnchor;
+    public Transform effectTextAnchor { get { return m_effectTextAnchor; } }
 
     [Header("Score")]
     [SerializeField] int coinsForWin = 30;
@@ -215,6 +217,14 @@ public class Player : MonoBehaviourPunCallbacks
         if (dead || invincibility) return;
         Resources.Load<StatusEffectData>(Path.Combine("Status Effects", "Datas", effectName)).AddEffectToPlayer(this);
     }
+    [PunRPC] public void AddStatusEffectText(int id, string text, Vector3 color)
+    {
+        Transform obj = PhotonView.Find(id).transform;
+        if (obj == null) return;
+        obj.SetParent(effectTextAnchor, false);
+        //obj.localScale = Vector2.one;
+        obj.GetComponent<StatusEffectText>().Set(text, color.ToColor());
+    }
     public bool FindStatusEffect<T>(out T found) where T : StatusEffect
     {
         foreach(var i in statusEffects)
@@ -269,27 +279,7 @@ public class Player : MonoBehaviourPunCallbacks
     [PunRPC]
     public void GetDamage(float damage)
     {
-        if (dead) return;
-        if (invincibility)
-        {
-            GameManager.Instance.UIs.DamageText(0.0f, transform.position, Color.black);
-            return;
-        }
-        GameManager.Instance.UIs.DamageText(damage, transform.position);
-        photonView.RPC("SetHp", RpcTarget.All, Mathf.Max(0, hp - damage));
-        onDamage?.Invoke(damage);
-        if (hp <= 0) Death();
-    }
-    [PunRPC]
-    public void GetDamageColor(float damage, Vector3 color)
-    {
-        if (dead) return;
-        if (invincibility)
-        {
-            GameManager.Instance.UIs.DamageText(0.0f, transform.position, Color.black);
-            return;
-        }
-        GameManager.Instance.UIs.DamageText(damage, transform.position, new Color(color.x, color.y, color.z));
+        if (dead || invincibility) return;
         photonView.RPC("SetHp", RpcTarget.All, Mathf.Max(0, hp - damage));
         onDamage?.Invoke(damage);
         if (hp <= 0) Death();
@@ -305,42 +295,6 @@ public class Player : MonoBehaviourPunCallbacks
     {
         if (dead || invincibility) return;
         rb.AddForce(knockback, ForceMode2D.Impulse);
-    }
-    [PunRPC] public void SetCanMove(bool canMove)
-    {
-        this.canMove = canMove;
-    }
-    [PunRPC] public void SetCanDash(bool canDash)
-    {
-        this.canDash = canDash;
-    }
-    [PunRPC] public void SetCanAttack(bool canAttack)
-    {
-        this.canAttack = canAttack;
-    }
-    [PunRPC] public void MultiplyMoveSpeed(float multiplier)
-    {
-        moveSpeedMultiplier *= multiplier;
-    }
-    [PunRPC] public void DivideMoveSpeed(float divided)
-    {
-        moveSpeedMultiplier /= divided;
-    }
-    [PunRPC] public void MultiplyAttackDamage(float multiplier)
-    {
-        attackDamageMultiplier *= multiplier;
-    }
-    [PunRPC] public void DivideAttackDamage(float divided)
-    {
-        attackDamageMultiplier /= divided;
-    }
-    [PunRPC] public void MultiplyReceivedDamage(float multiplier)
-    {
-        receivedDamageMultiplier *= multiplier;
-    }
-    [PunRPC] public void DivideReceivedDamage(float divided)
-    {
-        receivedDamageMultiplier /= divided;
     }
     public bool dead { get; private set; } = false;
     public Action onDeath, onRevive;
@@ -403,12 +357,15 @@ public class Player : MonoBehaviourPunCallbacks
     {
         forceFieldOn = true;
         invincibility = true;
+        GameManager.Instance.onRoundEnd += EndInvinciblility;
         photonView.RPC("SetForceFieldVisibility", RpcTarget.All, true);
         yield return forceFieldTime;
         forceFieldOn = false;
         invincibility = false;
+        GameManager.Instance.onRoundEnd -= EndInvinciblility;
         photonView.RPC("SetForceFieldVisibility", RpcTarget.All, false);
     }
+    void EndInvinciblility() => invincibility = false;
     [PunRPC] public void SetForceFieldVisibility(bool visibility) => forceField.SetActive(visibility);
     public override void OnPlayerEnteredRoom(Photon.Realtime.Player newPlayer)
     {
